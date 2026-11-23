@@ -5,9 +5,10 @@ Este arquivo é o ponto de entrada canônico para o Antigravity CLI na raiz do r
 ## Ordem obrigatória de leitura antes de qualquer alteração
 
 1. `.agents/rules/` (`architecture.md`, `angular-standards.md`, `feature-based-structure.md`, `typescript-conventions.md`, `fastify-and-data.md`, `testing-standards.md`, `documentation-sdd.md`, `repository-governance.md`).
-2. `docs/ROADMAP.md` e o último relatório em `docs/reports/`.
-3. Especificações aplicáveis em `docs/specifications/` e ADRs em `docs/architecture/decisions/`.
-4. Auditorias relevantes em `docs/audits/`.
+2. `.agents/skills/` — skills reutilizáveis de validação (`repository-audit`, `documentation-validation`, `angular-validation`, `fastify-validation`, `database-validation`, `data-integrity-validation`, `security-validation`, `e2e-validation`, `release-readiness`).
+3. `docs/ROADMAP.md` e o último relatório em `docs/reports/`.
+4. Especificações aplicáveis em `docs/specifications/` e ADRs em `docs/architecture/decisions/`.
+5. Auditorias relevantes em `docs/audits/`.
 
 ## Proibições absolutas
 

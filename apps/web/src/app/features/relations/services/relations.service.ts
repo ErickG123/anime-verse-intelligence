@@ -1,7 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import type { NetworkGraphResponseDto } from '@animeverse/contracts';
+import type {
+  AnimeSummaryDto,
+  NetworkGraphResponseDto,
+  PaginatedResponse,
+} from '@animeverse/contracts';
 import { environment } from '@env/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -15,5 +19,10 @@ export class RelationsService {
       `${this.baseUrl}/anime/${encodeURIComponent(animeId)}/network`,
       { params },
     );
+  }
+
+  searchAnimeWorks(query: string): Observable<PaginatedResponse<AnimeSummaryDto>> {
+    const params = new HttpParams().set('q', query.trim()).set('page', '1').set('pageSize', '8');
+    return this.http.get<PaginatedResponse<AnimeSummaryDto>>(`${this.baseUrl}/anime`, { params });
   }
 }

@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -39,6 +40,7 @@ import { CatalogService } from '@features/catalog/services/catalog.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DecimalPipe,
     RouterLink,
     TranslocoPipe,
     AppIconComponent,

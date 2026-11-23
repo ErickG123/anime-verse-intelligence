@@ -1,0 +1,13 @@
+{
+  "manifestVersion": "1.0.0",
+  "updatedAt": "2026-11-23",
+  "batches": [
+    {
+      "id": "initial-curation-2026-11-23",
+      "file": "datasets/initial-curation-v1.json",
+      "worksCount": 3,
+      "rightsStatus": "VERIFIED",
+      "license": "CC0-1.0 / Original Factual Editorial Metadata"
+    }
+  ]
+}

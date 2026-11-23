@@ -30,18 +30,16 @@ export const routes: Routes = [
   {
     path: 'lore',
     loadComponent: () =>
-      import('@features/placeholder/pages/placeholder/module-placeholder-page.component').then(
-        (m) => m.ModulePlaceholderPageComponent,
+      import('@features/lore-graph/pages/lore-explorer/lore-explorer-page.component').then(
+        (m) => m.LoreExplorerPageComponent,
       ),
-    data: { titleKey: 'future.loreTitle', messageKey: 'future.loreDescription' },
   },
   {
     path: 'adaptation',
     loadComponent: () =>
-      import('@features/placeholder/pages/placeholder/module-placeholder-page.component').then(
-        (m) => m.ModulePlaceholderPageComponent,
+      import('@features/adaptation-lab/pages/adaptation-explorer/adaptation-explorer-page.component').then(
+        (m) => m.AdaptationExplorerPageComponent,
       ),
-    data: { titleKey: 'future.adaptationTitle', messageKey: 'future.adaptationDescription' },
   },
   {
     path: 'about',

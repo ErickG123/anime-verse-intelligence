@@ -1,5 +1,5 @@
 <section class="detail">
-  <a class="detail__back" routerLink="/catalog">{{ 'states.back' | transloco }}</a>
+  <a class="detail__back" routerLink="/catalog">← {{ 'states.back' | transloco }}</a>
 
   @if (viewState() === 'loading') {
     <app-state-panel kind="loading" />
@@ -7,109 +7,220 @@
     <app-state-panel kind="error" [message]="errorMessage()" (retry)="load()" />
   } @else if (anime(); as item) {
     <header class="detail__hero">
-      <div class="detail__placeholder" aria-hidden="true">
-        <span>{{ item.type }}</span>
+      <div class="detail__poster">
+        @if (authorizedPosterUrl(); as posterUrl) {
+          <img
+            class="detail__poster-img"
+            [src]="posterUrl"
+            [alt]="item.title"
+            loading="lazy"
+            (error)="onPosterError()"
+          />
+        } @else {
+          <span class="detail__monogram" aria-hidden="true">{{
+            item.title.slice(0, 2).toUpperCase()
+          }}</span>
+          <span class="detail__type-tag" aria-hidden="true">{{ item.type }}</span>
+        }
       </div>
-      <div>
-        <h1>{{ item.title }}</h1>
-        <p class="detail__notice">{{ 'catalog.imageNotice' | transloco }}</p>
-        <div class="detail__stats">
-          <span
-            >{{ 'catalog.season' | transloco }}: {{ item.season }}
-            {{ item.seasonYear ?? ('states.missing' | transloco) }}</span
-          >
-          <span
-            >{{ 'catalog.episodes' | transloco }}:
-            {{ item.episodes ?? ('states.missing' | transloco) }}</span
-          >
-          <span
-            >{{ 'catalog.score' | transloco }}:
-            {{ item.scoreArithmeticMean ?? ('states.missing' | transloco) }}</span
-          >
+
+      <div class="detail__hero-body">
+        <div class="detail__badges">
+          <span class="detail__pill">{{ item.type }}</span>
+          <span class="detail__pill detail__pill--status">
+            {{ 'catalog.statusLabels.' + item.status | transloco }}
+          </span>
+          @if (item.scoreArithmeticMean !== null) {
+            <span class="detail__pill detail__pill--score">
+              ★ {{ item.scoreArithmeticMean | number: '1.2-2' }} / 10
+            </span>
+          }
         </div>
-        <a
-          class="detail__graph-link"
-          [routerLink]="['/relations']"
-          [queryParams]="{ animeId: item.id }"
-        >
-          <app-icon name="relations" [size]="16" />
-          <span>{{ 'relations.title' | transloco }}</span>
-        </a>
+
+        <h1>{{ item.title }}</h1>
+        @if (tmdbData()?.match?.originalName && tmdbData()?.match?.originalName !== item.title) {
+          <p class="detail__orig-name">{{ tmdbData()?.match?.originalName }}</p>
+        }
+        @if (tmdbData()?.match?.overview) {
+          <p class="detail__overview">{{ tmdbData()?.match?.overview }}</p>
+          <p class="detail__notice">{{ tmdbData()?.attribution }}</p>
+        } @else {
+          <p class="detail__notice">{{ 'catalog.imageNotice' | transloco }}</p>
+        }
+
+        <dl class="detail__kpis">
+          <div>
+            <dt>{{ 'catalog.season' | transloco }}</dt>
+            <dd>
+              {{ 'catalog.seasonLabels.' + item.season | transloco }}
+              @if (item.seasonYear) {
+                • {{ item.seasonYear }}
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>{{ 'catalog.episodes' | transloco }}</dt>
+            <dd>{{ item.episodes ?? ('states.missing' | transloco) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'catalog.score' | transloco }}</dt>
+            <dd>
+              @if (item.scoreArithmeticMean !== null) {
+                {{ item.scoreArithmeticMean | number: '1.2-2' }} / 10
+              } @else {
+                {{ 'states.missing' | transloco }}
+              }
+            </dd>
+          </div>
+        </dl>
+
+        <nav class="detail__hub" [attr.aria-label]="'catalog.exploreModules' | transloco">
+          <a
+            class="detail__hub-btn detail__hub-btn--primary"
+            [routerLink]="['/relations']"
+            [queryParams]="{ animeId: item.id }"
+          >
+            <app-icon name="relations" [size]="16" />
+            <span>{{ 'relations.title' | transloco }}</span>
+          </a>
+          <a class="detail__hub-btn" routerLink="/studios">
+            <span>{{ 'nav.studios' | transloco }}</span>
+          </a>
+          <a class="detail__hub-btn" routerLink="/lore">
+            <span>{{ 'nav.lore' | transloco }}</span>
+          </a>
+          <a class="detail__hub-btn" routerLink="/adaptation">
+            <span>{{ 'nav.adaptation' | transloco }}</span>
+          </a>
+        </nav>
       </div>
     </header>
 
     <div class="detail__grid">
       <article class="detail__card">
-        <h2>{{ 'catalog.aliases' | transloco }}</h2>
-        @if (item.aliases.length > 0) {
-          <ul>
-            @for (alias of item.aliases; track alias) {
-              <li>{{ alias }}</li>
-            }
-          </ul>
+        <h2>{{ 'catalog.studios' | transloco }} & {{ 'catalog.producers' | transloco }}</h2>
+        @if (studioCompanies().length === 0 && producerCompanies().length === 0) {
+          <p class="detail__muted">{{ 'states.missing' | transloco }}</p>
         } @else {
-          <p>{{ 'states.missing' | transloco }}</p>
+          @if (studioCompanies().length > 0) {
+            <h3 class="detail__subhead">{{ 'catalog.studios' | transloco }}</h3>
+            <div class="detail__chips">
+              @for (c of studioCompanies(); track c.id) {
+                <a
+                  class="detail__chip detail__chip--studio"
+                  [routerLink]="['/studios']"
+                  [queryParams]="{ companyId: c.id }"
+                >
+                  {{ c.name }}
+                </a>
+              }
+            </div>
+          }
+          @if (producerCompanies().length > 0) {
+            <h3 class="detail__subhead">{{ 'catalog.producers' | transloco }}</h3>
+            <div class="detail__chips">
+              @for (c of producerCompanies(); track c.id) {
+                <a
+                  class="detail__chip"
+                  [routerLink]="['/studios']"
+                  [queryParams]="{ companyId: c.id }"
+                >
+                  {{ c.name }}
+                </a>
+              }
+            </div>
+          }
         }
       </article>
 
       <article class="detail__card">
-        <h2>{{ 'catalog.studios' | transloco }} & {{ 'catalog.producers' | transloco }}</h2>
-        @if (item.companies.length > 0) {
-          <ul>
-            @for (c of item.companies; track c.id + c.role) {
-              <li>
-                <a [routerLink]="['/studios']" [queryParams]="{ companyId: c.id }">{{ c.name }}</a>
-                ({{ c.role }})
-              </li>
+        <h2>{{ 'catalog.aliases' | transloco }} ({{ item.aliases.length }})</h2>
+        @if (item.aliases.length > 0) {
+          <div class="detail__chips">
+            @for (alias of visibleAliases(); track alias) {
+              <span class="detail__chip">{{ alias }}</span>
             }
-          </ul>
+          </div>
+          @if (item.aliases.length > 6) {
+            <button type="button" class="detail__toggle-btn" (click)="toggleAliases()">
+              @if (showAllAliases()) {
+                {{ 'catalog.showLessAliases' | transloco }}
+              } @else {
+                {{ 'catalog.showAllAliases' | transloco }} (+{{ item.aliases.length - 6 }})
+              }
+            </button>
+          }
         } @else {
-          <p>{{ 'states.missing' | transloco }}</p>
+          <p class="detail__muted">{{ 'states.missing' | transloco }}</p>
         }
       </article>
 
       <article class="detail__card">
         <h2>{{ 'catalog.externalLinks' | transloco }}</h2>
-        <ul>
+        <div class="detail__chips">
           @for (ref of item.externalReferences; track ref.normalizedUrl) {
-            <li>
-              <a [href]="ref.normalizedUrl" target="_blank" rel="noopener noreferrer">
-                {{ ref.provider }} <app-icon name="external" [size]="14" />
-              </a>
-            </li>
+            <a
+              class="detail__chip detail__chip--link"
+              [href]="ref.normalizedUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{{ ref.provider }}</span>
+              <app-icon name="external" [size]="13" />
+            </a>
           }
-        </ul>
+        </div>
       </article>
 
       <article class="detail__card">
         <h2>{{ 'catalog.provenance' | transloco }}</h2>
-        <p>{{ item.provenance.sourceName ?? ('states.missing' | transloco) }}</p>
-        <p>{{ item.provenance.license ?? ('states.missing' | transloco) }}</p>
-        <p>Snapshot: {{ item.provenance.snapshotVersion ?? ('states.missing' | transloco) }}</p>
+        <dl class="detail__prov-list">
+          <div>
+            <dt>{{ 'sources.title' | transloco }}</dt>
+            <dd>{{ item.provenance.sourceName ?? ('states.missing' | transloco) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'sources.license' | transloco }}</dt>
+            <dd>{{ item.provenance.license ?? ('states.missing' | transloco) }}</dd>
+          </div>
+          <div>
+            <dt>Snapshot</dt>
+            <dd>{{ item.provenance.snapshotVersion ?? ('states.missing' | transloco) }}</dd>
+          </div>
+        </dl>
       </article>
     </div>
 
     <article class="detail__card">
       <h2>{{ 'catalog.related' | transloco }} ({{ related().length }})</h2>
       @if (related().length > 0) {
-        <ul>
+        <div class="detail__related-grid">
           @for (rel of related(); track rel.id) {
-            <li>
-              <a [routerLink]="['/catalog', rel.id]">{{ rel.title }}</a>
-              — <span>{{ rel.relationType }}</span>
-            </li>
+            <a class="detail__related-card" [routerLink]="['/catalog', rel.id]">
+              <span class="detail__related-title">{{ rel.title }}</span>
+              <span class="detail__related-meta">
+                {{
+                  rel.relationType === 'UNSPECIFIED'
+                    ? ('catalog.unspecifiedRelation' | transloco)
+                    : rel.relationType
+                }}
+              </span>
+            </a>
           }
-        </ul>
+        </div>
       } @else {
-        <p>{{ 'states.missing' | transloco }}</p>
+        <p class="detail__muted">{{ 'states.missing' | transloco }}</p>
       }
     </article>
 
     <article class="detail__card">
       <h2>{{ 'catalog.externalSection' | transloco }}</h2>
       @if (externalStatus(); as ext) {
-        <p>{{ ext.message }}</p>
-        @if (ext.enabled && ext.linked) {
+        @if (!ext.enabled) {
+          <p class="detail__muted">{{ 'catalog.externalDisabled' | transloco }}</p>
+        } @else if (!ext.linked) {
+          <p class="detail__muted">{{ 'catalog.externalUnlinked' | transloco }}</p>
+        } @else {
           <div class="detail__actions">
             <button type="button" (click)="loadAniListData()" [disabled]="externalLoading()">
               {{ 'catalog.loadExternal' | transloco }}
@@ -127,32 +238,38 @@
 
       @if (characters(); as chars) {
         @if (chars.state === 'OK' && chars.items.length > 0) {
-          <h3>{{ 'catalog.characters' | transloco }} ({{ chars.items.length }})</h3>
-          <ul>
+          <h3 class="detail__subhead">
+            {{ 'catalog.characters' | transloco }} ({{ chars.items.length }})
+          </h3>
+          <div class="detail__related-grid">
             @for (c of chars.items; track c.id) {
-              <li>
-                <strong>{{ c.name }}</strong> ({{ c.role }})
-                @if (c.voiceActors.length > 0) {
-                  — {{ c.voiceActors[0]?.name }} ({{ c.voiceActors[0]?.language ?? '—' }})
-                }
-              </li>
+              <div class="detail__related-card">
+                <strong>{{ c.name }}</strong>
+                <span class="detail__related-meta">
+                  {{ c.role }}
+                  @if (c.voiceActors.length > 0) {
+                    • {{ c.voiceActors[0]?.name }}
+                  }
+                </span>
+              </div>
             }
-          </ul>
-        } @else if (chars.message) {
-          <p>{{ chars.message }}</p>
+          </div>
+        } @else if (chars.state === 'RATE_LIMITED') {
+          <p class="detail__muted">{{ 'catalog.externalRateLimited' | transloco }}</p>
         }
       }
 
       @if (staff(); as st) {
         @if (st.state === 'OK' && st.items.length > 0) {
-          <h3>{{ 'catalog.staff' | transloco }} ({{ st.items.length }})</h3>
-          <ul>
+          <h3 class="detail__subhead">{{ 'catalog.staff' | transloco }} ({{ st.items.length }})</h3>
+          <div class="detail__related-grid">
             @for (p of st.items; track p.id + p.role) {
-              <li>
-                <strong>{{ p.name }}</strong> — {{ p.role }}
-              </li>
+              <div class="detail__related-card">
+                <strong>{{ p.name }}</strong>
+                <span class="detail__related-meta">{{ p.role }}</span>
+              </div>
             }
-          </ul>
+          </div>
         }
       }
 

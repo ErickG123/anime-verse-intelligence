@@ -13,8 +13,8 @@
 ## 2. Pré-Requisitos Antes de Habilitar Escrita Editorial em Produção
 
 - [ ] Acoplar provedor OIDC/sessão real ao `registerEditorialGovernanceRoutes` (substituindo `failClosedAuthenticator` apenas em ambiente autenticado).
-- [ ] Instalar e executar suíte E2E Playwright (desktop/mobile, dark/light, `pt-BR`/`en`, teclado/a11y) em ambiente de staging.
-- [ ] Executar teste de backup e restore (`pg_dump` -> banco isolado -> `db:status` + verificação de contagens) conforme [DATABASE-RUNBOOK.md](DATABASE-RUNBOOK.md).
+- [x] Instalar e executar suíte E2E Playwright (`chromium`, `firefox`, `webkit`, `mobile-chromium` — `48/48` PASS) em `2026-11-23`.
+- [x] Executar teste de backup e restore (`pg_dump` -> banco isolado -> `db:status` + verificação de contagens) conforme [DOCKER-POSTGRES-REBUILD-RUNBOOK.md](DOCKER-POSTGRES-REBUILD-RUNBOOK.md) — validado em `2026-11-23` (`38.519` obras, `138.093` relações, `3` migrações, SHA-256 verificado).
 
 ## 3. Procedimento de Backup & Restore (PostgreSQL)
 

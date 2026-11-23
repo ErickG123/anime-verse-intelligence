@@ -1,0 +1,116 @@
+<section class="adaptation-explorer" aria-labelledby="adaptation-heading">
+  <header class="adaptation-header">
+    <div>
+      <h1 id="adaptation-heading">{{ 'adaptation.title' | transloco }}</h1>
+      <p class="subtitle">{{ 'adaptation.subtitle' | transloco }}</p>
+    </div>
+
+    <label class="work-selector">
+      <span>{{ 'adaptation.workLabel' | transloco }}</span>
+      <select
+        [value]="selectedWorkId()"
+        (change)="selectWork($any($event.target).value)"
+        [attr.aria-label]="'adaptation.workLabel' | transloco"
+      >
+        @for (work of works(); track work.id) {
+          <option [value]="work.id">{{ work.title }} ({{ work.type }})</option>
+        }
+      </select>
+    </label>
+  </header>
+
+  @if (error()) {
+    <div class="status-banner error" role="alert">{{ error() }}</div>
+  } @else if (loading()) {
+    <div class="status-banner" role="status" aria-live="polite">
+      {{ 'states.loading' | transloco }}
+    </div>
+  } @else if (data(); as payload) {
+    <div class="coverage-bar" aria-label="Adaptation coverage metrics">
+      <span>
+        {{ 'adaptation.coverageSourceManga' | transloco }}:
+        <strong>{{ payload.mangaTitle ?? ('adaptation.coverageNoneOriginal' | transloco) }}</strong>
+      </span>
+      <span>
+        {{ 'adaptation.coverageEpisodes' | transloco }}:
+        <strong
+          >{{ payload.coverage.documentedEpisodes }} /
+          {{ payload.coverage.denominatorEpisodes ?? '?' }}</strong
+        >
+      </span>
+      <span
+        >{{ 'adaptation.coverageChapters' | transloco }}:
+        <strong>{{ payload.coverage.documentedChapters }}</strong></span
+      >
+      <span
+        >{{ 'adaptation.coverageMappings' | transloco }}:
+        <strong>{{ payload.coverage.mappingsCount }}</strong></span
+      >
+    </div>
+
+    <div class="comparison-grid">
+      <div class="episodes-column">
+        <h2>{{ 'adaptation.episodesHeading' | transloco }}</h2>
+        <button
+          type="button"
+          class="ep-btn"
+          [class.selected]="selectedEpisodeNumber() === null"
+          (click)="selectEpisode(null)"
+        >
+          {{ 'adaptation.allEpisodes' | transloco }}
+        </button>
+        @for (ep of payload.episodes; track ep.id) {
+          <button
+            type="button"
+            class="ep-btn"
+            [class.selected]="selectedEpisodeNumber() === ep.episodeNumber"
+            (click)="selectEpisode(ep.episodeNumber)"
+          >
+            <strong>{{ 'adaptation.episodePrefix' | transloco }} {{ ep.episodeNumber }}</strong>
+            @if (ep.title) {
+              <span> — {{ ep.title }}</span>
+            }
+          </button>
+        }
+      </div>
+
+      <div class="mappings-column">
+        <h2>{{ 'adaptation.mappingsHeading' | transloco }}</h2>
+        @if (selectedEpisodeMappings().length === 0) {
+          <p class="empty-state">{{ 'adaptation.emptySelection' | transloco }}</p>
+        } @else {
+          @for (map of selectedEpisodeMappings(); track map.id) {
+            <article class="mapping-card">
+              <div class="mapping-top">
+                <strong>{{ 'adaptation.episodeFull' | transloco }} {{ map.episodeNumber }}</strong>
+                <span class="kind-badge">{{ map.mappingKind }}</span>
+                <span>
+                  @if (map.chapterNumber) {
+                    {{ 'adaptation.chapterFull' | transloco }} {{ map.chapterNumber }}
+                    @if (map.chapterTitle) {
+                      ({{ map.chapterTitle }})
+                    }
+                  } @else {
+                    {{ 'adaptation.noSourceChapter' | transloco }}
+                  }
+                </span>
+              </div>
+              @if (map.notes) {
+                <p class="mapping-notes">{{ map.notes }}</p>
+              }
+              <footer class="mapping-meta">
+                <span>{{ 'adaptation.metaConfidence' | transloco }}: {{ map.confidence }}</span>
+                <span>{{ 'adaptation.metaSpoiler' | transloco }}: {{ map.spoilerLevel }}</span>
+                @if (map.reviewer) {
+                  <span>{{ 'adaptation.metaCurator' | transloco }}: {{ map.reviewer }}</span>
+                }
+              </footer>
+            </article>
+          }
+        }
+      </div>
+    </div>
+  } @else {
+    <p class="empty-state">{{ 'adaptation.emptySelection' | transloco }}</p>
+  }
+</section>

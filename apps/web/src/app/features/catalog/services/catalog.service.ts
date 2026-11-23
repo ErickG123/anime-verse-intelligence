@@ -16,6 +16,7 @@ import type {
   CatalogFilterState,
   RelatedAnimeApiResponse,
 } from '@features/catalog/models/catalog.model';
+import type { TmdbExternalResponse } from '@features/catalog/models/anime-media.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
@@ -87,6 +88,12 @@ export class CatalogService {
     return this.http.get<NetworkGraphResponseDto>(
       `${this.baseUrl}/anime/${encodeURIComponent(id)}/studio-graph-staff`,
       { params },
+    );
+  }
+
+  getTmdbMetadata(id: string): Observable<TmdbExternalResponse> {
+    return this.http.get<TmdbExternalResponse>(
+      `${this.baseUrl}/anime/${encodeURIComponent(id)}/external/tmdb`,
     );
   }
 }

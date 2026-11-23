@@ -1,0 +1,31 @@
+# Isolated validation stack (Modalidade A — REBUILD-ISOLATED)
+# Usage:
+#   $env:POSTGRES_VALIDATION_PASSWORD = "<strong-session-password>"
+#   docker compose -p animeverse-validation -f compose.validation.yaml up -d postgres
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: animeverse-validation-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_VALIDATION_DB:-animeverse_validation}
+      POSTGRES_USER: ${POSTGRES_VALIDATION_USER:-animeverse_val}
+      POSTGRES_PASSWORD: ${POSTGRES_VALIDATION_PASSWORD:?POSTGRES_VALIDATION_PASSWORD must be set in session env}
+    ports:
+      - '127.0.0.1:${POSTGRES_VALIDATION_PORT:-55432}:5432'
+    volumes:
+      - animeverse_validation_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_VALIDATION_USER:-animeverse_val} -d ${POSTGRES_VALIDATION_DB:-animeverse_validation}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  animeverse_validation_pgdata:
+    name: animeverse_validation_pgdata

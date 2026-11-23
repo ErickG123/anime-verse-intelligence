@@ -1,6 +1,8 @@
+import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -25,12 +27,14 @@ import { AppIconComponent } from '@shared/components/app-icon/app-icon.component
 import { CytoscapeGraphComponent } from '@shared/components/cytoscape-graph/cytoscape-graph.component';
 import { StatePanelComponent } from '@shared/components/state-panel/state-panel.component';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import type { TmdbExternalResponse } from '@features/catalog/models/anime-media.model';
 
 @Component({
   selector: 'app-anime-detail-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DecimalPipe,
     RouterLink,
     TranslocoPipe,
     AppIconComponent,
@@ -49,6 +53,16 @@ export class AnimeDetailPageComponent implements OnInit {
   protected readonly related = signal<RelatedAnimeItemDto[]>([]);
   protected readonly viewState = signal<AsyncViewState>('loading');
   protected readonly errorMessage = signal<string>('');
+  protected readonly showAllAliases = signal<boolean>(false);
+  protected readonly tmdbData = signal<TmdbExternalResponse | null>(null);
+  protected readonly posterBroken = signal<boolean>(false);
+
+  protected readonly authorizedPosterUrl = computed<string | null>(() => {
+    if (this.posterBroken()) return null;
+    const match = this.tmdbData()?.match;
+    if (!match || match.usageStatus !== 'ALLOWED') return null;
+    return match.posterUrl;
+  });
 
   protected readonly externalStatus = signal<AniListExternalStatusDto | null>(null);
   protected readonly externalLoading = signal<boolean>(false);
@@ -57,8 +71,29 @@ export class AnimeDetailPageComponent implements OnInit {
   protected readonly anilistStudios = signal<AniListStudiosResponseDto | null>(null);
   protected readonly staffGraph = signal<NetworkGraphResponseDto | null>(null);
 
+  protected readonly visibleAliases = computed(() => {
+    const list = this.anime()?.aliases ?? [];
+    return this.showAllAliases() ? list : list.slice(0, 6);
+  });
+
+  protected readonly studioCompanies = computed(() =>
+    (this.anime()?.companies ?? []).filter((c) => c.role === 'STUDIO'),
+  );
+
+  protected readonly producerCompanies = computed(() =>
+    (this.anime()?.companies ?? []).filter((c) => c.role === 'PRODUCER'),
+  );
+
   ngOnInit(): void {
     this.load();
+  }
+
+  protected toggleAliases(): void {
+    this.showAllAliases.update((v) => !v);
+  }
+
+  protected onPosterError(): void {
+    this.posterBroken.set(true);
   }
 
   protected load(): void {
@@ -68,6 +103,9 @@ export class AnimeDetailPageComponent implements OnInit {
           const id = params.get('id') ?? '';
           this.viewState.set('loading');
           this.errorMessage.set('');
+          this.showAllAliases.set(false);
+          this.tmdbData.set(null);
+          this.posterBroken.set(false);
           this.characters.set(null);
           this.staff.set(null);
           this.anilistStudios.set(null);
@@ -95,6 +133,15 @@ export class AnimeDetailPageComponent implements OnInit {
         this.related.set(res.related?.items ?? []);
         this.externalStatus.set(res.externalStatus);
         this.viewState.set('ready');
+
+        // Progressive TMDB media & overview enrichment (never blocks local catalog)
+        this.catalogService
+          .getTmdbMetadata(res.detail.id)
+          .pipe(
+            catchError(() => of(null)),
+            takeUntilDestroyed(this.destroyRef),
+          )
+          .subscribe((tmdb) => this.tmdbData.set(tmdb));
       });
   }
 

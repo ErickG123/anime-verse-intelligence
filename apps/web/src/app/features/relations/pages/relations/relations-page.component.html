@@ -6,8 +6,23 @@
       <p class="relations__notice">{{ 'relations.unspecifiedNotice' | transloco }}</p>
     </div>
 
-    @if (animeId()) {
-      <div class="relations__controls">
+    <div class="relations__controls">
+      <form
+        class="relations__picker"
+        (submit)="$event.preventDefault(); runSearch()"
+        [attr.aria-label]="'relations.searchLabel' | transloco"
+      >
+        <input
+          type="search"
+          [value]="searchQuery()"
+          [placeholder]="'relations.searchPlaceholder' | transloco"
+          [attr.aria-label]="'relations.searchLabel' | transloco"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+        <button type="submit">{{ 'relations.searchButton' | transloco }}</button>
+      </form>
+
+      @if (animeId()) {
         <label>
           {{ 'relations.depth' | transloco }}
           <select [value]="depth()" (change)="setDepth(+$any($event.target).value)">
@@ -25,9 +40,22 @@
             {{ 'relations.resetView' | transloco }}
           </button>
         }
-      </div>
-    }
+      }
+    </div>
   </header>
+
+  @if (searchResults().length > 0) {
+    <div class="relations__results">
+      <p class="relations__results-label">{{ 'relations.selectWorkPrompt' | transloco }}</p>
+      <div class="relations__results-chips">
+        @for (item of searchResults(); track item.id) {
+          <button type="button" (click)="selectAnime(item.id)">
+            {{ item.title }} ({{ item.type }} • {{ item.seasonYear ?? '—' }})
+          </button>
+        }
+      </div>
+    </div>
+  }
 
   @if (viewState() === 'loading') {
     <app-state-panel kind="loading" />
@@ -48,10 +76,10 @@
         <table class="relations__table">
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Type</th>
-              <th>Year</th>
-              <th>Relation</th>
+              <th>{{ 'catalog.title' | transloco }}</th>
+              <th>{{ 'catalog.filterType' | transloco }}</th>
+              <th>{{ 'catalog.filterYear' | transloco }}</th>
+              <th>{{ 'relations.title' | transloco }}</th>
             </tr>
           </thead>
           <tbody>
@@ -62,7 +90,9 @@
                 </td>
                 <td>{{ node.type ?? ('states.missing' | transloco) }}</td>
                 <td>{{ node.seasonYear ?? ('states.missing' | transloco) }}</td>
-                <td>{{ node.isCenter ? 'CENTER' : 'UNSPECIFIED' }}</td>
+                <td>
+                  {{ node.isCenter ? 'CENTER' : ('catalog.unspecifiedRelation' | transloco) }}
+                </td>
               </tr>
             }
           </tbody>

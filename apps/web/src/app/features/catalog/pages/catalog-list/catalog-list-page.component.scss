@@ -1,30 +1,60 @@
 .catalog {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-4);
 
-  &__header {
+  &__hero {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     gap: var(--space-4);
     flex-wrap: wrap;
+    padding: var(--space-4) var(--space-6);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
 
     h1 {
       margin: 0;
+      font-size: 1.6rem;
     }
   }
 
-  &__subtitle,
-  &__count {
+  &__subtitle {
     margin: var(--space-1) 0 0;
     color: var(--text-secondary);
+  }
+
+  &__counter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+  }
+
+  &__counter-number {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--accent-secondary);
+  }
+
+  &__counter-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  &__quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
   }
 
   &__filters {
     display: grid;
     grid-template-columns: minmax(220px, 2fr) repeat(5, minmax(120px, 1fr)) auto;
     gap: var(--space-2);
-    padding: var(--space-4);
+    padding: var(--space-3);
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
@@ -38,7 +68,7 @@
       background: var(--bg-elevated);
       color: var(--text-primary);
       font: inherit;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
   }
 
@@ -53,7 +83,6 @@
 
     input {
       border: 0;
-      padding: var(--space-2) 0;
       background: transparent;
     }
   }
@@ -70,13 +99,32 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     gap: var(--space-4);
   }
 }
 
+.quick-chip {
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &--active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--accent-contrast);
+  }
+}
+
 .anime-card {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4);
   border-radius: var(--radius-md);
@@ -84,14 +132,35 @@
   background: var(--bg-surface);
   box-shadow: var(--shadow-card);
 
+  &__top,
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  &__monogram {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    color: var(--accent-secondary);
+    font-weight: 700;
+    font-size: 0.78rem;
+  }
+
   &__badge-row {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-1);
     flex-wrap: wrap;
+    flex: 1;
   }
 
   &__pill {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 999px;
@@ -103,10 +172,20 @@
     }
   }
 
+  &__score {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    color: var(--status-ok);
+  }
+
   &__title {
     margin: 0;
     font-size: 1.05rem;
-    line-height: 1.3;
+    line-height: 1.35;
   }
 
   &__meta {
@@ -114,24 +193,39 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-2);
     margin: 0;
+    padding: var(--space-2);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-sm);
 
     dt {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
     }
 
     dd {
-      margin: 0;
+      margin: 2px 0 0;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
     }
   }
 
+  &__footer {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--border-subtle);
+  }
+
   &__studios {
-    margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__cta {
+    font-size: 0.8rem;
+    font-weight: 600;
   }
 }
 

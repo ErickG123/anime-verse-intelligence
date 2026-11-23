@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "1.0.0",
+  "curationBatchId": "initial-curation-2026-11-23",
+  "curator": "animeverse-editorial-team",
+  "reviewedAt": "2026-11-23T18:10:00Z",
+  "rightsPolicy": {
+    "license": "CC0-1.0 / Original Factual Editorial Metadata",
+    "rightsStatus": "VERIFIED",
+    "attribution": "Original factual metadata compiled by AnimeVerse Editorial Team; no copyrighted synopses or scans redistributed."
+  },
+  "works": [
+    {
+      "animeNormalizedTitle": "fullmetal alchemist: brotherhood",
+      "animeType": "TV",
+      "manga": {
+        "title": "Fullmetal Alchemist",
+        "publicationStatus": "PUBLISHED",
+        "chapters": [
+          { "chapterNumber": "1", "title": "The Two Alchemists", "spoilerLevel": "NONE" },
+          { "chapterNumber": "2", "title": "The Price of Life", "spoilerLevel": "MILD" },
+          { "chapterNumber": "3", "title": "City of Heresy", "spoilerLevel": "MILD" }
+        ]
+      },
+      "episodes": [
+        { "episodeNumber": 1, "title": "Fullmetal Alchemist", "spoilerLevel": "NONE" },
+        { "episodeNumber": 2, "title": "The First Day", "spoilerLevel": "MILD" },
+        { "episodeNumber": 3, "title": "City of Heresy", "spoilerLevel": "MILD" }
+      ],
+      "characters": [
+        { "name": "Edward Elric", "publicationStatus": "PUBLISHED" },
+        { "name": "Alphonse Elric", "publicationStatus": "PUBLISHED" }
+      ],
+      "arcs": [
+        {
+          "name": "Introduction & Liore Arc",
+          "spoilerLevel": "NONE",
+          "publicationStatus": "PUBLISHED",
+          "events": [
+            {
+              "key": "fmab-ev-1",
+              "summary": "Edward and Alphonse Elric arrive in Central City as State Alchemist brothers searching for the Philosopher's Stone.",
+              "spoilerLevel": "NONE",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            },
+            {
+              "key": "fmab-ev-2",
+              "summary": "Flashback reveals the brothers' failed human transmutation attempt and its cost.",
+              "spoilerLevel": "MILD",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            },
+            {
+              "key": "fmab-ev-3",
+              "summary": "Investigation in Liore exposes Father Cornello's artificial Philosopher's Stone.",
+              "spoilerLevel": "MAJOR",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            }
+          ]
+        }
+      ],
+      "eventRelations": [
+        { "fromKey": "fmab-ev-2", "toKey": "fmab-ev-1", "relationKind": "CAUSES" },
+        { "fromKey": "fmab-ev-1", "toKey": "fmab-ev-3", "relationKind": "PRECEDES" }
+      ],
+      "adaptationMappings": [
+        {
+          "episodeNumber": 1,
+          "chapterNumber": null,
+          "mappingKind": "ANIME_ORIGINAL",
+          "notes": "Anime-original introductory episode presenting Central City and Isaac McDougal.",
+          "spoilerLevel": "NONE",
+          "confidence": 1.0,
+          "publicationStatus": "PUBLISHED"
+        },
+        {
+          "episodeNumber": 2,
+          "chapterNumber": "2",
+          "mappingKind": "DIRECT",
+          "notes": "Adapts the brothers' backstory and human transmutation.",
+          "spoilerLevel": "MILD",
+          "confidence": 1.0,
+          "publicationStatus": "PUBLISHED"
+        },
+        {
+          "episodeNumber": 3,
+          "chapterNumber": "1",
+          "mappingKind": "PARTIAL",
+          "notes": "Combines Liore introduction from Chapter 1 with Chapter 3 progression.",
+          "spoilerLevel": "MILD",
+          "confidence": 0.95,
+          "publicationStatus": "PUBLISHED"
+        }
+      ]
+    },
+    {
+      "animeNormalizedTitle": "death note",
+      "animeType": "TV",
+      "manga": {
+        "title": "Death Note",
+        "publicationStatus": "PUBLISHED",
+        "chapters": [
+          { "chapterNumber": "1", "title": "Boredom", "spoilerLevel": "NONE" },
+          { "chapterNumber": "2", "title": "L", "spoilerLevel": "MILD" }
+        ]
+      },
+      "episodes": [
+        { "episodeNumber": 1, "title": "Rebirth", "spoilerLevel": "NONE" },
+        { "episodeNumber": 2, "title": "Confrontation", "spoilerLevel": "MILD" }
+      ],
+      "characters": [
+        { "name": "Light Yagami", "publicationStatus": "PUBLISHED" },
+        { "name": "L Lawliet", "publicationStatus": "PUBLISHED" }
+      ],
+      "arcs": [
+        {
+          "name": "Kira Investigation Opening Arc",
+          "spoilerLevel": "NONE",
+          "publicationStatus": "PUBLISHED",
+          "events": [
+            {
+              "key": "dn-ev-1",
+              "summary": "High school student Light Yagami discovers a supernatural notebook dropped in the human world.",
+              "spoilerLevel": "NONE",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            },
+            {
+              "key": "dn-ev-2",
+              "summary": "Detective L broadcasts a live television trap that narrows Kira's location to the Kanto region of Japan.",
+              "spoilerLevel": "MILD",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            }
+          ]
+        }
+      ],
+      "eventRelations": [{ "fromKey": "dn-ev-1", "toKey": "dn-ev-2", "relationKind": "CAUSES" }],
+      "adaptationMappings": [
+        {
+          "episodeNumber": 1,
+          "chapterNumber": "1",
+          "mappingKind": "DIRECT",
+          "notes": "Direct adaptation of Chapter 1.",
+          "spoilerLevel": "NONE",
+          "confidence": 1.0,
+          "publicationStatus": "PUBLISHED"
+        },
+        {
+          "episodeNumber": 2,
+          "chapterNumber": "2",
+          "mappingKind": "DIRECT",
+          "notes": "Direct adaptation of L's broadcast confrontation in Chapter 2.",
+          "spoilerLevel": "MILD",
+          "confidence": 1.0,
+          "publicationStatus": "PUBLISHED"
+        }
+      ]
+    },
+    {
+      "animeNormalizedTitle": "cowboy bebop",
+      "animeType": "TV",
+      "manga": null,
+      "episodes": [
+        { "episodeNumber": 1, "title": "Asteroid Blues", "spoilerLevel": "NONE" },
+        { "episodeNumber": 5, "title": "Ballad of Fallen Angels", "spoilerLevel": "MAJOR" }
+      ],
+      "characters": [
+        { "name": "Spike Spiegel", "publicationStatus": "PUBLISHED" },
+        { "name": "Jet Black", "publicationStatus": "PUBLISHED" }
+      ],
+      "arcs": [
+        {
+          "name": "Bebop Crew & Syndicate Past",
+          "spoilerLevel": "NONE",
+          "publicationStatus": "PUBLISHED",
+          "events": [
+            {
+              "key": "cb-ev-1",
+              "summary": "Bounty hunters Spike Spiegel and Jet Black pursue a target on the Tijuana asteroid colony.",
+              "spoilerLevel": "NONE",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            },
+            {
+              "key": "cb-ev-2",
+              "summary": "Spike confronts Vicious in a cathedral, revealing ties to the Red Dragon Crime Syndicate.",
+              "spoilerLevel": "MAJOR",
+              "confidence": 1.0,
+              "publicationStatus": "PUBLISHED"
+            }
+          ]
+        }
+      ],
+      "eventRelations": [{ "fromKey": "cb-ev-1", "toKey": "cb-ev-2", "relationKind": "PRECEDES" }],
+      "adaptationMappings": [
+        {
+          "episodeNumber": 1,
+          "chapterNumber": null,
+          "mappingKind": "ANIME_ORIGINAL",
+          "notes": "Cowboy Bebop is an original anime work (no source manga).",
+          "spoilerLevel": "NONE",
+          "confidence": 1.0,
+          "publicationStatus": "PUBLISHED"
+        }
+      ]
+    }
+  ]
+}

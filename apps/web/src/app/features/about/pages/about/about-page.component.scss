@@ -1,31 +1,62 @@
 .about {
   display: grid;
   gap: var(--space-4);
-  max-width: 78ch;
 
-  h1 {
-    margin: 0;
+  &__hero {
+    padding: var(--space-4) var(--space-6);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+
+    h1 {
+      margin: 0;
+    }
   }
 
-  &__lead {
-    margin: 0;
+  &__subtitle {
+    margin: var(--space-1) 0 0;
     color: var(--text-secondary);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
   }
 
   &__card {
     padding: var(--space-4);
-    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
     background: var(--bg-surface);
+    box-shadow: var(--shadow-card);
 
     h2 {
       margin: 0 0 var(--space-2);
-      font-size: 1.05rem;
+      font-size: 1.15rem;
     }
 
     p {
       margin: 0 0 var(--space-2);
       color: var(--text-secondary);
     }
+
+    &--highlight {
+      border-color: var(--border-strong);
+    }
+  }
+
+  &__pillars {
+    margin: 0;
+    padding-left: var(--space-4);
+    display: grid;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+  }
+
+  &__governance {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.9rem;
   }
 }

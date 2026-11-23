@@ -35,6 +35,8 @@ import { registerStudioGraphRoutes } from './modules/studio-graph/routes.js';
 import { MangaUpdatesClient } from './modules/integrations/editorial/mangaupdates-client.js';
 import { WikidataEditorialClient } from './modules/integrations/editorial/wikidata-client.js';
 import { registerEditorialRoutes } from './modules/integrations/editorial/routes.js';
+import { TmdbClient } from './modules/integrations/tmdb/client.js';
+import { registerTmdbRoutes } from './modules/integrations/tmdb/routes.js';
 import {
   registerEditorialGovernanceRoutes,
   type EditorialAuthenticator,
@@ -79,6 +81,8 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
           '*.password',
           '*.databaseUrl',
           '*.token',
+          '*.tmdbApiKey',
+          '*.tmdbReadAccessToken',
         ],
         censor: '[REDACTED]',
       },
@@ -102,7 +106,8 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     (dbHandle ? new DrizzleRelationsRepository(dbHandle.db) : undefined);
   const studiosRepository =
     options.studiosRepository ?? (dbHandle ? new DrizzleStudiosRepository(dbHandle.db) : undefined);
-  const sourcesRepository = options.sourcesRepository ?? new DrizzleSourcesRepository(dbHandle?.db);
+  const sourcesRepository =
+    options.sourcesRepository ?? new DrizzleSourcesRepository(dbHandle?.db, env.enrichmentFlags);
 
   const anilistResolver =
     options.anilistIdentityResolver ??
@@ -150,13 +155,21 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   await registerStudiosRoutes(app, studiosRepository);
   await registerSourcesRoutes(app, sourcesRepository);
   await registerEnrichmentRoutes(app, env);
-  await registerLoreAndAdaptationRoutes(app, options.loreRepository);
+  await registerLoreAndAdaptationRoutes(app, options.loreRepository, dbHandle?.pool);
   await registerAniListRoutes(app, anilistService);
   await registerStudioGraphRoutes(app, env, studioGraphRepository);
   await registerEditorialRoutes(app, {
     db: dbHandle?.db,
     mangaUpdatesClient: new MangaUpdatesClient({ enabled: env.enrichmentFlags.mangaupdates }),
     wikidataClient: new WikidataEditorialClient({ enabled: env.enrichmentFlags.wikidata }),
+  });
+  await registerTmdbRoutes(app, {
+    db: dbHandle?.db,
+    tmdbClient: new TmdbClient({
+      enabled: env.enrichmentFlags.tmdb,
+      apiKey: env.tmdbApiKey,
+      readAccessToken: env.tmdbReadAccessToken,
+    }),
   });
   await registerEditorialGovernanceRoutes(app, {
     authenticate: options.editorialAuthenticator,

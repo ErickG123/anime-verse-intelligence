@@ -1,0 +1,128 @@
+<section class="lore-explorer" aria-labelledby="lore-heading">
+  <header class="lore-header">
+    <div>
+      <h1 id="lore-heading">{{ 'lore.title' | transloco }}</h1>
+      <p class="subtitle">{{ 'lore.subtitle' | transloco }}</p>
+    </div>
+
+    <div class="controls" role="region" aria-label="LoreGraph controls">
+      <label class="control-group">
+        <span>{{ 'lore.workLabel' | transloco }}</span>
+        <select
+          [value]="selectedWorkId()"
+          (change)="selectWork($any($event.target).value)"
+          [attr.aria-label]="'lore.workLabel' | transloco"
+        >
+          @for (work of works(); track work.id) {
+            <option [value]="work.id">{{ work.title }} ({{ work.type }})</option>
+          }
+        </select>
+      </label>
+
+      <fieldset class="spoiler-controls">
+        <legend>{{ 'lore.spoilerLegend' | transloco }}</legend>
+        <button
+          type="button"
+          [class.active]="maxSpoiler() === 'NONE'"
+          (click)="setSpoilerLevel('NONE')"
+        >
+          {{ 'lore.spoilerNone' | transloco }}
+        </button>
+        <button
+          type="button"
+          [class.active]="maxSpoiler() === 'MILD'"
+          (click)="setSpoilerLevel('MILD')"
+        >
+          {{ 'lore.spoilerMild' | transloco }}
+        </button>
+        <button
+          type="button"
+          [class.active]="maxSpoiler() === 'MAJOR'"
+          (click)="setSpoilerLevel('MAJOR')"
+        >
+          {{ 'lore.spoilerMajor' | transloco }}
+        </button>
+      </fieldset>
+
+      <div class="view-toggle" role="group" [attr.aria-label]="'lore.viewModeLabel' | transloco">
+        <button
+          type="button"
+          [class.active]="viewMode() === 'timeline'"
+          (click)="setViewMode('timeline')"
+        >
+          {{ 'lore.viewTimeline' | transloco }}
+        </button>
+        <button type="button" [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">
+          {{ 'lore.viewList' | transloco }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="status-banner error" role="alert">{{ error() }}</div>
+  } @else if (loading()) {
+    <div class="status-banner" role="status" aria-live="polite">
+      {{ 'states.loading' | transloco }}
+    </div>
+  } @else if (loreData(); as data) {
+    <div class="coverage-bar" aria-label="Editorial coverage summary">
+      <span
+        >{{ 'lore.coverageArcs' | transloco }}: <strong>{{ data.coverage.arcsCount }}</strong></span
+      >
+      <span
+        >{{ 'lore.coverageEvents' | transloco }}:
+        <strong>{{ data.coverage.visibleEventsCount }}</strong></span
+      >
+      <span
+        >{{ 'lore.coverageRelations' | transloco }}:
+        <strong>{{ data.coverage.relationsCount }}</strong></span
+      >
+      <span
+        >{{ 'lore.coverageCharacters' | transloco }}:
+        <strong>{{ data.characters.length }}</strong></span
+      >
+    </div>
+
+    @if (data.events.length === 0) {
+      <p class="empty-state">{{ 'lore.emptyBoundary' | transloco }} ({{ maxSpoiler() }})</p>
+    } @else {
+      <div class="lore-grid">
+        <div class="events-panel" [class.timeline-mode]="viewMode() === 'timeline'">
+          @for (ev of data.events; track ev.id) {
+            <article
+              class="event-card"
+              [class.selected]="selectedEventId() === ev.id"
+              tabindex="0"
+              role="button"
+              (click)="selectEvent(ev.id)"
+              (keydown.enter)="selectEvent(ev.id)"
+            >
+              <span class="badge">{{ ev.spoilerLevel }}</span>
+              <p>{{ ev.summary }}</p>
+            </article>
+          }
+        </div>
+
+        <aside class="details-panel" aria-label="Event details">
+          @if (selectedEvent(); as ev) {
+            <h2>{{ 'lore.selectedEventTitle' | transloco }}</h2>
+            <p class="detail-summary">{{ ev.summary }}</p>
+            <dl class="detail-meta">
+              <dt>{{ 'lore.metaSpoiler' | transloco }}</dt>
+              <dd>{{ ev.spoilerLevel }}</dd>
+              <dt>{{ 'lore.metaConfidence' | transloco }}</dt>
+              <dd>{{ ev.confidence }}</dd>
+              <dt>{{ 'lore.metaRelations' | transloco }}</dt>
+              <dd>{{ selectedEventRelations().length }}</dd>
+            </dl>
+          } @else {
+            <p class="hint">{{ 'lore.selectHint' | transloco }}</p>
+          }
+        </aside>
+      </div>
+    }
+  } @else {
+    <p class="empty-state">{{ 'lore.emptyDatabase' | transloco }}</p>
+  }
+</section>

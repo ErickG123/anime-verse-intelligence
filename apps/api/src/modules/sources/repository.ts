@@ -9,8 +9,18 @@ export interface SourcesRepository {
   listRunsForSource(sourceSlug: string, limit: number): Promise<IngestionRunDto[]>;
 }
 
+export interface EnrichmentFlagsLike {
+  anilist: boolean;
+  wikidata: boolean;
+  mangaupdates: boolean;
+  tmdb: boolean;
+}
+
 export class DrizzleSourcesRepository implements SourcesRepository {
-  constructor(private readonly db?: AppDatabase) {}
+  constructor(
+    private readonly db?: AppDatabase,
+    private readonly enrichmentFlags?: EnrichmentFlagsLike,
+  ) {}
 
   async listDataSources(): Promise<DataSourceDto[]> {
     const dbBySlug = new Map<
@@ -47,16 +57,25 @@ export class DrizzleSourcesRepository implements SourcesRepository {
 
     return DATA_SOURCE_REGISTRY.map((src) => {
       const dbMeta = dbBySlug.get(src.sourceId);
+      const dynamicEnabled =
+        (src.sourceId === 'anilist' && this.enrichmentFlags?.anilist) ||
+        (src.sourceId === 'wikidata' && this.enrichmentFlags?.wikidata) ||
+        (src.sourceId === 'mangaupdates' && this.enrichmentFlags?.mangaupdates) ||
+        (src.sourceId === 'tmdb' && this.enrichmentFlags?.tmdb);
+
       return {
         sourceId: src.sourceId,
         name: src.name,
         kind: src.kind,
         documentationUrl: src.documentationUrl,
-        status: src.status,
+        status: dynamicEnabled ? 'ACTIVE' : src.status,
         license: src.license,
         attribution: src.attribution,
         policyVersion: src.policyVersion,
-        permissions: { ...src.permissions },
+        permissions: {
+          ...src.permissions,
+          fetch: dynamicEnabled ? true : src.permissions.fetch,
+        },
         notes: src.notes,
         lastSnapshotVersion: dbMeta?.lastSnapshotVersion ?? null,
         lastRunAt: dbMeta?.lastRunAt ?? null,

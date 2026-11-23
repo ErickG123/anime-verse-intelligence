@@ -32,13 +32,52 @@
     flex-wrap: wrap;
 
     select,
-    button {
+    button,
+    input {
       padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-strong);
       background: var(--bg-surface);
       color: var(--text-primary);
       font: inherit;
+    }
+
+    button,
+    select {
+      cursor: pointer;
+    }
+  }
+
+  &__picker {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  &__results {
+    padding: var(--space-3);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  &__results-label {
+    margin: 0 0 var(--space-2);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  &__results-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+
+    button {
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--accent-secondary);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
       cursor: pointer;
     }
   }

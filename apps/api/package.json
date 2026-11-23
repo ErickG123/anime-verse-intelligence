@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "dataset:download": "tsx src/cli/dataset-download.ts",
     "dataset:import": "tsx src/cli/dataset-import.ts",
-    "dataset:sync": "tsx src/cli/dataset-sync.ts"
+    "dataset:sync": "tsx src/cli/dataset-sync.ts",
+    "curation:import": "tsx src/cli/curation-import.ts"
   },
   "dependencies": {
     "@animeverse/contracts": "workspace:*",

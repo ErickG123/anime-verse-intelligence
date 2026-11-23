@@ -1,13 +1,39 @@
 <section class="catalog">
-  <header class="catalog__header">
-    <div>
+  <header class="catalog__hero">
+    <div class="catalog__hero-copy">
       <h1>{{ 'catalog.title' | transloco }}</h1>
       <p class="catalog__subtitle">{{ 'catalog.subtitle' | transloco }}</p>
     </div>
-    <p class="catalog__count" aria-live="polite">
-      {{ pagination().total }} {{ 'catalog.resultsCount' | transloco }}
-    </p>
+    <div class="catalog__counter" aria-live="polite">
+      <span class="catalog__counter-number">{{ pagination().total | number }}</span>
+      <span class="catalog__counter-label">{{ 'catalog.resultsCount' | transloco }}</span>
+    </div>
   </header>
+
+  <div
+    class="catalog__quick-chips"
+    role="group"
+    [attr.aria-label]="'catalog.filterType' | transloco"
+  >
+    <button
+      type="button"
+      class="quick-chip"
+      [class.quick-chip--active]="!filters().type"
+      (click)="updateFilters({ type: '', page: 1 })"
+    >
+      {{ 'catalog.all' | transloco }}
+    </button>
+    @for (t of animeTypes; track t) {
+      <button
+        type="button"
+        class="quick-chip"
+        [class.quick-chip--active]="filters().type === t"
+        (click)="updateFilters({ type: t, page: 1 })"
+      >
+        {{ t }}
+      </button>
+    }
+  </div>
 
   <form class="catalog__filters" (submit)="$event.preventDefault()" aria-label="Catalog filters">
     <div class="catalog__search">
@@ -44,7 +70,7 @@
         {{ 'catalog.filterStatus' | transloco }}: {{ 'catalog.all' | transloco }}
       </option>
       @for (s of animeStatuses; track s) {
-        <option [value]="s">{{ s }}</option>
+        <option [value]="s">{{ 'catalog.statusLabels.' + s | transloco }}</option>
       }
     </select>
 
@@ -57,7 +83,7 @@
         {{ 'catalog.filterSeason' | transloco }}: {{ 'catalog.all' | transloco }}
       </option>
       @for (season of animeSeasons; track season) {
-        <option [value]="season">{{ season }}</option>
+        <option [value]="season">{{ 'catalog.seasonLabels.' + season | transloco }}</option>
       }
     </select>
 
@@ -76,10 +102,18 @@
       [value]="filters().sortBy"
       (change)="updateFilters({ sortBy: $any($event.target).value, page: 1 })"
     >
-      <option value="title">{{ 'catalog.sortBy' | transloco }}: Title</option>
-      <option value="year">{{ 'catalog.sortBy' | transloco }}: Year</option>
-      <option value="score">{{ 'catalog.sortBy' | transloco }}: Score</option>
-      <option value="episodes">{{ 'catalog.sortBy' | transloco }}: Episodes</option>
+      <option value="title">
+        {{ 'catalog.sortBy' | transloco }}: {{ 'catalog.sortTitle' | transloco }}
+      </option>
+      <option value="year">
+        {{ 'catalog.sortBy' | transloco }}: {{ 'catalog.sortYear' | transloco }}
+      </option>
+      <option value="score">
+        {{ 'catalog.sortBy' | transloco }}: {{ 'catalog.sortScore' | transloco }}
+      </option>
+      <option value="episodes">
+        {{ 'catalog.sortBy' | transloco }}: {{ 'catalog.sortEpisodes' | transloco }}
+      </option>
     </select>
 
     @if (hasActiveFilters()) {
@@ -99,9 +133,21 @@
     <div class="catalog__grid">
       @for (anime of items(); track anime.id) {
         <article class="anime-card">
-          <div class="anime-card__badge-row">
-            <span class="anime-card__pill">{{ anime.type }}</span>
-            <span class="anime-card__pill anime-card__pill--muted">{{ anime.status }}</span>
+          <div class="anime-card__top">
+            <span class="anime-card__monogram" aria-hidden="true">{{
+              anime.title.slice(0, 2).toUpperCase()
+            }}</span>
+            <div class="anime-card__badge-row">
+              <span class="anime-card__pill">{{ anime.type }}</span>
+              <span class="anime-card__pill anime-card__pill--muted">
+                {{ 'catalog.statusLabels.' + anime.status | transloco }}
+              </span>
+            </div>
+            @if (anime.scoreArithmeticMean !== null) {
+              <span class="anime-card__score" [attr.aria-label]="'catalog.score' | transloco">
+                {{ anime.scoreArithmeticMean | number: '1.2-2' }}
+              </span>
+            }
           </div>
 
           <h2 class="anime-card__title">
@@ -119,13 +165,28 @@
             </div>
             <div>
               <dt>{{ 'catalog.score' | transloco }}</dt>
-              <dd>{{ anime.scoreArithmeticMean ?? ('states.missing' | transloco) }}</dd>
+              <dd>
+                @if (anime.scoreArithmeticMean !== null) {
+                  {{ anime.scoreArithmeticMean | number: '1.2-2' }} / 10
+                } @else {
+                  {{ 'states.missing' | transloco }}
+                }
+              </dd>
             </div>
           </dl>
 
-          @if (anime.studios.length > 0) {
-            <p class="anime-card__studios">{{ anime.studios.join(', ') }}</p>
-          }
+          <footer class="anime-card__footer">
+            @if (anime.studios.length > 0) {
+              <span class="anime-card__studios">{{ anime.studios.slice(0, 2).join(', ') }}</span>
+            } @else {
+              <span class="anime-card__studios anime-card__studios--empty">{{
+                'states.missing' | transloco
+              }}</span>
+            }
+            <a class="anime-card__cta" [routerLink]="['/catalog', anime.id]">
+              {{ 'catalog.exploreDetail' | transloco }}
+            </a>
+          </footer>
         </article>
       }
     </div>

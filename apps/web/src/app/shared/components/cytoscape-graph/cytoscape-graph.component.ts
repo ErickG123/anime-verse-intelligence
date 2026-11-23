@@ -41,6 +41,8 @@ export class CytoscapeGraphComponent {
       this.destroyGraph();
       if (nodes.length === 0) return;
 
+      const hasCenter = nodes.some((n) => Boolean(n.isCenter));
+
       this.cy = cytoscape({
         container,
         elements: [
@@ -48,7 +50,12 @@ export class CytoscapeGraphComponent {
             data: { id: n.id, label: n.label, kind: n.kind, isCenter: Boolean(n.isCenter) },
           })),
           ...edges.map((e) => ({
-            data: { id: e.id, source: e.source, target: e.target, label: e.label },
+            data: {
+              id: e.id,
+              source: e.source,
+              target: e.target,
+              label: e.label === 'UNSPECIFIED' ? '' : e.label,
+            },
           })),
         ],
         style: [
@@ -57,13 +64,19 @@ export class CytoscapeGraphComponent {
             style: {
               label: 'data(label)',
               color: '#f1f5f9',
-              'font-size': '11px',
-              'text-wrap': 'wrap',
-              'text-max-width': '110px',
+              'font-size': '10px',
+              'min-zoomed-font-size': 8,
+              'text-wrap': 'ellipsis',
+              'text-max-width': '96px',
+              'text-valign': 'bottom',
+              'text-margin-y': 5,
+              'text-background-color': '#0b101b',
+              'text-background-opacity': 0.78,
+              'text-background-padding': '2px',
               'background-color': '#38bdf8',
               shape: 'ellipse',
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
             },
           },
           {
@@ -71,8 +84,8 @@ export class CytoscapeGraphComponent {
             style: {
               'background-color': '#a78bfa',
               shape: 'round-rectangle',
-              width: 36,
-              height: 30,
+              width: 34,
+              height: 28,
             },
           },
           {
@@ -80,8 +93,8 @@ export class CytoscapeGraphComponent {
             style: {
               'background-color': '#fbbf24',
               shape: 'hexagon',
-              width: 34,
-              height: 34,
+              width: 32,
+              height: 32,
             },
           },
           {
@@ -89,32 +102,50 @@ export class CytoscapeGraphComponent {
             style: {
               'background-color': '#34d399',
               shape: 'diamond',
-              width: 32,
-              height: 32,
+              width: 30,
+              height: 30,
             },
           },
           {
             selector: 'node[?isCenter]',
             style: {
               'background-color': '#ff5c7c',
-              width: 42,
-              height: 42,
+              width: 44,
+              height: 44,
+              'font-size': '12px',
               'font-weight': 'bold',
+              'text-max-width': '130px',
             },
           },
           {
             selector: 'edge',
             style: {
               label: 'data(label)',
-              'font-size': '9px',
+              'font-size': '8px',
               color: '#94a3b8',
               'line-color': '#475569',
-              width: 2,
+              'line-opacity': 0.75,
+              width: 1.8,
               'curve-style': 'bezier',
             },
           },
         ],
-        layout: { name: 'cose', animate: false, padding: 24 },
+        layout: hasCenter
+          ? {
+              name: 'concentric',
+              animate: false,
+              padding: 40,
+              minNodeSpacing: 52,
+              concentric: (node) => (node.data('isCenter') ? 10 : 1),
+              levelWidth: () => 2,
+            }
+          : {
+              name: 'cose',
+              animate: false,
+              padding: 40,
+              nodeRepulsion: () => 12000,
+              idealEdgeLength: () => 120,
+            },
       });
 
       const nodeMap = new Map(nodes.map((n) => [n.id, n]));

@@ -8,6 +8,8 @@ export interface AppEnv {
   rateLimitMax: number;
   rateLimitWindow: string;
   databaseUrl?: string;
+  tmdbApiKey?: string;
+  tmdbReadAccessToken?: string;
   enrichmentFlags: {
     anilist: boolean;
     wikidata: boolean;
@@ -51,7 +53,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
 
   return {
     nodeEnv,
-    apiHost: source['API_HOST'] ?? '0.0.0.0',
+    apiHost: source['API_HOST'] ?? '127.0.0.1',
     apiPort: parsePositiveInt(source['API_PORT'], 3000, 'API_PORT'),
     logLevel,
     corsOrigin,
@@ -59,6 +61,8 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
     rateLimitMax: parsePositiveInt(source['RATE_LIMIT_MAX'], 200, 'RATE_LIMIT_MAX'),
     rateLimitWindow: source['RATE_LIMIT_WINDOW'] ?? '1 minute',
     databaseUrl: source['DATABASE_URL'],
+    tmdbApiKey: source['TMDB_API_KEY']?.trim() || undefined,
+    tmdbReadAccessToken: source['TMDB_READ_ACCESS_TOKEN']?.trim() || undefined,
     enrichmentFlags: {
       anilist: parseBool(source['ENRICHMENT_ANILIST_ENABLED'], false),
       wikidata: parseBool(source['ENRICHMENT_WIKIDATA_ENABLED'], false),

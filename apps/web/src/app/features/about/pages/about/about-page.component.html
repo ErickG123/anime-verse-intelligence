@@ -1,15 +1,29 @@
-<article class="about">
-  <h1>{{ 'about.title' | transloco }}</h1>
-  <p class="about__lead">{{ 'about.subtitle' | transloco }}</p>
+<section class="about">
+  <header class="about__hero">
+    <h1>{{ 'about.title' | transloco }}</h1>
+    <p class="about__subtitle">{{ 'about.subtitle' | transloco }}</p>
+  </header>
 
-  <section class="about__card">
-    <h2>Stack</h2>
-    <p>{{ 'about.stack' | transloco }}</p>
-  </section>
+  <div class="about__grid">
+    <article class="about__card about__card--highlight">
+      <h2>{{ 'about.missionTitle' | transloco }}</h2>
+      <p>{{ 'about.missionBody' | transloco }}</p>
+    </article>
 
-  <section class="about__card">
-    <h2>{{ 'catalog.provenance' | transloco }}</h2>
-    <p>{{ 'about.governance' | transloco }}</p>
-    <p>{{ 'app.attribution' | transloco }}</p>
-  </section>
-</article>
+    <article class="about__card">
+      <h2>{{ 'about.pillarsTitle' | transloco }}</h2>
+      <ul class="about__pillars">
+        <li>{{ 'about.pillarCatalog' | transloco }}</li>
+        <li>{{ 'about.pillarStudios' | transloco }}</li>
+        <li>{{ 'about.pillarLore' | transloco }}</li>
+        <li>{{ 'about.pillarAdaptation' | transloco }}</li>
+      </ul>
+    </article>
+
+    <article class="about__card">
+      <h2>{{ 'about.stackTitle' | transloco }}</h2>
+      <p>{{ 'about.stack' | transloco }}</p>
+      <p class="about__governance">{{ 'about.governance' | transloco }}</p>
+    </article>
+  </div>
+</section>

@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { catchError, of, switchMap } from 'rxjs';
-import type { GraphNodeDto, NetworkGraphResponseDto } from '@animeverse/contracts';
+import type { AnimeSummaryDto, GraphNodeDto, NetworkGraphResponseDto } from '@animeverse/contracts';
 import type { NormalizedHttpError } from '@core/models/http-error.model';
 import type { AsyncViewState } from '@core/models/ui-state.model';
 import { CytoscapeGraphComponent } from '@shared/components/cytoscape-graph/cytoscape-graph.component';
@@ -35,6 +35,8 @@ export class RelationsPageComponent implements OnInit {
   private readonly graphComp = viewChild(CytoscapeGraphComponent);
 
   protected readonly animeId = signal<string>('');
+  protected readonly searchQuery = signal<string>('');
+  protected readonly searchResults = signal<AnimeSummaryDto[]>([]);
   protected readonly depth = signal<number>(1);
   protected readonly viewMode = signal<'graph' | 'table'>('graph');
   protected readonly graph = signal<NetworkGraphResponseDto | null>(null);
@@ -74,6 +76,29 @@ export class RelationsPageComponent implements OnInit {
         this.graph.set(data);
         this.viewState.set('ready');
       });
+  }
+
+  protected runSearch(): void {
+    const q = this.searchQuery().trim();
+    if (!q) return;
+    this.relationsService
+      .searchAnimeWorks(q)
+      .pipe(
+        catchError(() => of(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        if (res) this.searchResults.set(res.items);
+      });
+  }
+
+  protected selectAnime(id: string): void {
+    this.searchResults.set([]);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { animeId: id, depth: this.depth() },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected setDepth(depth: number): void {
