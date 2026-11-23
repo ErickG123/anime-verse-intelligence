@@ -1,0 +1,74 @@
+{
+  "project": "AnimeVerse Intelligence",
+  "package": "SDD Antigravity — Fases 23 a 28",
+  "date": "2026-11-23",
+  "phases": [23, 24, 25, 26, 27, 28],
+  "requires_previous_phase_reports": [21, 22],
+  "stack": [
+    "Angular 22",
+    "Fastify 5",
+    "PostgreSQL 17 Docker",
+    "Drizzle ORM",
+    "pnpm",
+    "Vitest",
+    "Playwright",
+    "Cytoscape.js"
+  ],
+  "files": [
+    {
+      "path": "CHECKLIST-DE-EXECUCAO.md",
+      "bytes": 2239,
+      "sha256": "dc4f78d0d85de6c223eda29db09ea2b4614f380c51a9ff89f41e7a16ccd50bf7"
+    },
+    {
+      "path": "PROMPT-MESTRE-23-28.md",
+      "bytes": 1717,
+      "sha256": "4782cf6bae64dff45a3f13e6b9aae27b04577398f2a57aeeadf1dbba0c07cb05"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3939,
+      "sha256": "2e19ca4286bdce21d49b73b2a1bd77c213562800072921d52366bc5f8e9a5a79"
+    },
+    {
+      "path": "docs/agent-workflows/prompts/PROMPT-23-STUDIOGRAPH-AVANCADO.md",
+      "bytes": 10160,
+      "sha256": "8e73441b58b299a8102682d54f7f123007a2893d363ac058e2c31b6854de2983"
+    },
+    {
+      "path": "docs/agent-workflows/prompts/PROMPT-24-MANGAUPDATES-WIKIDATA.md",
+      "bytes": 10012,
+      "sha256": "fd30475972a2643e296377bb4b6c4bdf4493c24bbf46fcff2273baa2f974652d"
+    },
+    {
+      "path": "docs/agent-workflows/prompts/PROMPT-25-LOREGRAPH.md",
+      "bytes": 11661,
+      "sha256": "57704c1ea0ed7baf7e70e210c7ad376661c2abfc942cbb12954912540b3ac6e8"
+    },
+    {
+      "path": "docs/agent-workflows/prompts/PROMPT-26-ADAPTATIONLAB.md",
+      "bytes": 11511,
+      "sha256": "ab6b7b7e9b33cc9de28b593e76a6025e7202c898021129fd29a121656072cfff"
+    },
+    {
+      "path": "docs/agent-workflows/prompts/PROMPT-27-CURADORIA-PROVENIENCIA.md",
+      "bytes": 13061,
+      "sha256": "a8a29e90ef51d6e01d5021f0c6ba383013e6287b14e07bd4184ca323e4015397"
+    },
+    {
+      "path": "docs/agent-workflows/prompts/PROMPT-28-AUDITORIA-MVP.md",
+      "bytes": 13032,
+      "sha256": "2c9c5a2d3de55ccac107ccfa4a423631d86b27a218789aa31ba49f9a857659b1"
+    },
+    {
+      "path": "docs/agent-workflows/references/CONTRATO-COMUM.md",
+      "bytes": 8273,
+      "sha256": "e734bfd667cfc99430afb60bd7b6c7ab880ca4b699e29616a9badaff6a304f50"
+    },
+    {
+      "path": "docs/agent-workflows/references/FONTES-E-POLITICAS.md",
+      "bytes": 2403,
+      "sha256": "482f5cbe510b832ae181a079bba4a5875091786422b16deb379e21c5ec47f522"
+    }
+  ]
+}

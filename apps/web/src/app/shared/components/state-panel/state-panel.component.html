@@ -1,0 +1,26 @@
+<section
+  class="state-panel"
+  [class.state-panel--error]="kind() === 'error'"
+  [attr.role]="kind() === 'error' ? 'alert' : 'status'"
+  aria-live="polite"
+>
+  @if (kind() === 'loading') {
+    <div class="state-panel__skeleton" aria-hidden="true"></div>
+    <p class="state-panel__message">{{ message() || ('states.loading' | transloco) }}</p>
+  } @else if (kind() === 'empty') {
+    <app-icon name="empty" [size]="28" />
+    <h2 class="state-panel__title">{{ title() || ('states.emptyTitle' | transloco) }}</h2>
+    @if (message()) {
+      <p class="state-panel__message">{{ message() }}</p>
+    }
+  } @else {
+    <app-icon name="alert" [size]="28" />
+    <h2 class="state-panel__title">{{ title() || ('states.errorTitle' | transloco) }}</h2>
+    @if (message()) {
+      <p class="state-panel__message">{{ message() }}</p>
+    }
+    <button type="button" class="state-panel__retry" (click)="retry.emit()">
+      {{ 'states.retry' | transloco }}
+    </button>
+  }
+</section>

@@ -1,0 +1,168 @@
+<section class="detail">
+  <a class="detail__back" routerLink="/catalog">{{ 'states.back' | transloco }}</a>
+
+  @if (viewState() === 'loading') {
+    <app-state-panel kind="loading" />
+  } @else if (viewState() === 'error') {
+    <app-state-panel kind="error" [message]="errorMessage()" (retry)="load()" />
+  } @else if (anime(); as item) {
+    <header class="detail__hero">
+      <div class="detail__placeholder" aria-hidden="true">
+        <span>{{ item.type }}</span>
+      </div>
+      <div>
+        <h1>{{ item.title }}</h1>
+        <p class="detail__notice">{{ 'catalog.imageNotice' | transloco }}</p>
+        <div class="detail__stats">
+          <span
+            >{{ 'catalog.season' | transloco }}: {{ item.season }}
+            {{ item.seasonYear ?? ('states.missing' | transloco) }}</span
+          >
+          <span
+            >{{ 'catalog.episodes' | transloco }}:
+            {{ item.episodes ?? ('states.missing' | transloco) }}</span
+          >
+          <span
+            >{{ 'catalog.score' | transloco }}:
+            {{ item.scoreArithmeticMean ?? ('states.missing' | transloco) }}</span
+          >
+        </div>
+        <a
+          class="detail__graph-link"
+          [routerLink]="['/relations']"
+          [queryParams]="{ animeId: item.id }"
+        >
+          <app-icon name="relations" [size]="16" />
+          <span>{{ 'relations.title' | transloco }}</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="detail__grid">
+      <article class="detail__card">
+        <h2>{{ 'catalog.aliases' | transloco }}</h2>
+        @if (item.aliases.length > 0) {
+          <ul>
+            @for (alias of item.aliases; track alias) {
+              <li>{{ alias }}</li>
+            }
+          </ul>
+        } @else {
+          <p>{{ 'states.missing' | transloco }}</p>
+        }
+      </article>
+
+      <article class="detail__card">
+        <h2>{{ 'catalog.studios' | transloco }} & {{ 'catalog.producers' | transloco }}</h2>
+        @if (item.companies.length > 0) {
+          <ul>
+            @for (c of item.companies; track c.id + c.role) {
+              <li>
+                <a [routerLink]="['/studios']" [queryParams]="{ companyId: c.id }">{{ c.name }}</a>
+                ({{ c.role }})
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>{{ 'states.missing' | transloco }}</p>
+        }
+      </article>
+
+      <article class="detail__card">
+        <h2>{{ 'catalog.externalLinks' | transloco }}</h2>
+        <ul>
+          @for (ref of item.externalReferences; track ref.normalizedUrl) {
+            <li>
+              <a [href]="ref.normalizedUrl" target="_blank" rel="noopener noreferrer">
+                {{ ref.provider }} <app-icon name="external" [size]="14" />
+              </a>
+            </li>
+          }
+        </ul>
+      </article>
+
+      <article class="detail__card">
+        <h2>{{ 'catalog.provenance' | transloco }}</h2>
+        <p>{{ item.provenance.sourceName ?? ('states.missing' | transloco) }}</p>
+        <p>{{ item.provenance.license ?? ('states.missing' | transloco) }}</p>
+        <p>Snapshot: {{ item.provenance.snapshotVersion ?? ('states.missing' | transloco) }}</p>
+      </article>
+    </div>
+
+    <article class="detail__card">
+      <h2>{{ 'catalog.related' | transloco }} ({{ related().length }})</h2>
+      @if (related().length > 0) {
+        <ul>
+          @for (rel of related(); track rel.id) {
+            <li>
+              <a [routerLink]="['/catalog', rel.id]">{{ rel.title }}</a>
+              — <span>{{ rel.relationType }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>{{ 'states.missing' | transloco }}</p>
+      }
+    </article>
+
+    <article class="detail__card">
+      <h2>{{ 'catalog.externalSection' | transloco }}</h2>
+      @if (externalStatus(); as ext) {
+        <p>{{ ext.message }}</p>
+        @if (ext.enabled && ext.linked) {
+          <div class="detail__actions">
+            <button type="button" (click)="loadAniListData()" [disabled]="externalLoading()">
+              {{ 'catalog.loadExternal' | transloco }}
+            </button>
+            <button type="button" (click)="loadStaffGraph()">
+              {{ 'catalog.studioGraphStaff' | transloco }}
+            </button>
+          </div>
+        }
+      }
+
+      @if (externalLoading()) {
+        <app-state-panel kind="loading" />
+      }
+
+      @if (characters(); as chars) {
+        @if (chars.state === 'OK' && chars.items.length > 0) {
+          <h3>{{ 'catalog.characters' | transloco }} ({{ chars.items.length }})</h3>
+          <ul>
+            @for (c of chars.items; track c.id) {
+              <li>
+                <strong>{{ c.name }}</strong> ({{ c.role }})
+                @if (c.voiceActors.length > 0) {
+                  — {{ c.voiceActors[0]?.name }} ({{ c.voiceActors[0]?.language ?? '—' }})
+                }
+              </li>
+            }
+          </ul>
+        } @else if (chars.message) {
+          <p>{{ chars.message }}</p>
+        }
+      }
+
+      @if (staff(); as st) {
+        @if (st.state === 'OK' && st.items.length > 0) {
+          <h3>{{ 'catalog.staff' | transloco }} ({{ st.items.length }})</h3>
+          <ul>
+            @for (p of st.items; track p.id + p.role) {
+              <li>
+                <strong>{{ p.name }}</strong> — {{ p.role }}
+              </li>
+            }
+          </ul>
+        }
+      }
+
+      @if (staffGraph(); as sg) {
+        <app-cytoscape-graph
+          [nodes]="sg.nodes"
+          [edges]="sg.edges"
+          [ariaLabel]="'catalog.studioGraphStaff' | transloco"
+        />
+      }
+    </article>
+  }
+</section>

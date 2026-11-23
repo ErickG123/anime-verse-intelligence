@@ -1,0 +1,9 @@
+# Registro de fontes — SDD
+
+| ID            | Nome                           | Meio                 | Autenticação                          | Licença             | Permite armazenar?                     | Status        | Observações                                                           |
+| ------------- | ------------------------------ | -------------------- | ------------------------------------- | ------------------- | -------------------------------------- | ------------- | --------------------------------------------------------------------- |
+| anime-offline | cedya77/anime-offline-database | GitHub release JSONL | Sem chave para baixar release pública | ODbL 1.0 / DbCL 1.0 | Conforme licença e condições de origem | Fonte inicial | Atribuir cedya77 e manami-project; confirmar termos antes de publicar |
+| anilist       | AniList                        | GraphQL              | Público sem token; OAuth para conta   | Termos próprios     | Não espelhar em massa                  | Inativo       | Validar política de cache/competição                                  |
+| wikidata      | Wikidata                       | SPARQL/REST          | Leitura pública                       | CC0 para dados      | Conforme regras                        | Inativo       | Planejado                                                             |
+| mangaupdates  | MangaUpdates                   | REST                 | Leitura pública para muitos endpoints | Termos próprios     | Verificar                              | Inativo       | Planejado                                                             |
+| tmdb          | TMDB                           | REST                 | Chave/token                           | Termos próprios     | Verificar                              | Inativo       | Planejado                                                             |

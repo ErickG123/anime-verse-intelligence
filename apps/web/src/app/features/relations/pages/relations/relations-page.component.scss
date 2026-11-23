@@ -1,0 +1,64 @@
+.relations {
+  display: grid;
+  gap: var(--space-4);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  &__subtitle {
+    margin: var(--space-1) 0;
+    color: var(--text-secondary);
+  }
+
+  &__notice {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--status-warn);
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+
+    select,
+    button {
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font: inherit;
+      cursor: pointer;
+    }
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      text-align: left;
+      padding: var(--space-3);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+  }
+}

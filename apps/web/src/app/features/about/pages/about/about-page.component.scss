@@ -1,0 +1,31 @@
+.about {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 78ch;
+
+  h1 {
+    margin: 0;
+  }
+
+  &__lead {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+
+  &__card {
+    padding: var(--space-4);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+
+    h2 {
+      margin: 0 0 var(--space-2);
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 0 0 var(--space-2);
+      color: var(--text-secondary);
+    }
+  }
+}

@@ -1,0 +1,139 @@
+<section class="catalog">
+  <header class="catalog__header">
+    <div>
+      <h1>{{ 'catalog.title' | transloco }}</h1>
+      <p class="catalog__subtitle">{{ 'catalog.subtitle' | transloco }}</p>
+    </div>
+    <p class="catalog__count" aria-live="polite">
+      {{ pagination().total }} {{ 'catalog.resultsCount' | transloco }}
+    </p>
+  </header>
+
+  <form class="catalog__filters" (submit)="$event.preventDefault()" aria-label="Catalog filters">
+    <div class="catalog__search">
+      <app-icon name="search" [size]="16" />
+      <label class="sr-only" for="catalog-q">{{ 'catalog.searchPlaceholder' | transloco }}</label>
+      <input
+        id="catalog-q"
+        type="search"
+        [value]="filters().q"
+        [placeholder]="'catalog.searchPlaceholder' | transloco"
+        (input)="onSearchInput($any($event.target).value)"
+      />
+    </div>
+
+    <select
+      [attr.aria-label]="'catalog.filterType' | transloco"
+      [value]="filters().type"
+      (change)="updateFilters({ type: $any($event.target).value, page: 1 })"
+    >
+      <option value="">
+        {{ 'catalog.filterType' | transloco }}: {{ 'catalog.all' | transloco }}
+      </option>
+      @for (t of animeTypes; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+
+    <select
+      [attr.aria-label]="'catalog.filterStatus' | transloco"
+      [value]="filters().status"
+      (change)="updateFilters({ status: $any($event.target).value, page: 1 })"
+    >
+      <option value="">
+        {{ 'catalog.filterStatus' | transloco }}: {{ 'catalog.all' | transloco }}
+      </option>
+      @for (s of animeStatuses; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+
+    <select
+      [attr.aria-label]="'catalog.filterSeason' | transloco"
+      [value]="filters().season"
+      (change)="updateFilters({ season: $any($event.target).value, page: 1 })"
+    >
+      <option value="">
+        {{ 'catalog.filterSeason' | transloco }}: {{ 'catalog.all' | transloco }}
+      </option>
+      @for (season of animeSeasons; track season) {
+        <option [value]="season">{{ season }}</option>
+      }
+    </select>
+
+    <input
+      type="number"
+      min="1900"
+      max="2100"
+      [attr.aria-label]="'catalog.filterYear' | transloco"
+      [placeholder]="'catalog.filterYear' | transloco"
+      [value]="filters().year"
+      (change)="updateFilters({ year: $any($event.target).value, page: 1 })"
+    />
+
+    <select
+      [attr.aria-label]="'catalog.sortBy' | transloco"
+      [value]="filters().sortBy"
+      (change)="updateFilters({ sortBy: $any($event.target).value, page: 1 })"
+    >
+      <option value="title">{{ 'catalog.sortBy' | transloco }}: Title</option>
+      <option value="year">{{ 'catalog.sortBy' | transloco }}: Year</option>
+      <option value="score">{{ 'catalog.sortBy' | transloco }}: Score</option>
+      <option value="episodes">{{ 'catalog.sortBy' | transloco }}: Episodes</option>
+    </select>
+
+    @if (hasActiveFilters()) {
+      <button type="button" class="catalog__clear" (click)="clearFilters()">
+        {{ 'catalog.clearFilters' | transloco }}
+      </button>
+    }
+  </form>
+
+  @if (viewState() === 'loading') {
+    <app-state-panel kind="loading" />
+  } @else if (viewState() === 'error') {
+    <app-state-panel kind="error" [message]="errorMessage()" (retry)="retry()" />
+  } @else if (viewState() === 'empty') {
+    <app-state-panel kind="empty" [message]="'states.emptyCatalog' | transloco" />
+  } @else {
+    <div class="catalog__grid">
+      @for (anime of items(); track anime.id) {
+        <article class="anime-card">
+          <div class="anime-card__badge-row">
+            <span class="anime-card__pill">{{ anime.type }}</span>
+            <span class="anime-card__pill anime-card__pill--muted">{{ anime.status }}</span>
+          </div>
+
+          <h2 class="anime-card__title">
+            <a [routerLink]="['/catalog', anime.id]">{{ anime.title }}</a>
+          </h2>
+
+          <dl class="anime-card__meta">
+            <div>
+              <dt>{{ 'catalog.season' | transloco }}</dt>
+              <dd>{{ anime.seasonYear ?? ('states.missing' | transloco) }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'catalog.episodes' | transloco }}</dt>
+              <dd>{{ anime.episodes ?? ('states.missing' | transloco) }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'catalog.score' | transloco }}</dt>
+              <dd>{{ anime.scoreArithmeticMean ?? ('states.missing' | transloco) }}</dd>
+            </div>
+          </dl>
+
+          @if (anime.studios.length > 0) {
+            <p class="anime-card__studios">{{ anime.studios.join(', ') }}</p>
+          }
+        </article>
+      }
+    </div>
+
+    <app-pagination-bar
+      [page]="pagination().page"
+      [totalPages]="pagination().totalPages"
+      (pageChange)="updateFilters({ page: $event })"
+    />
+  }
+</section>

@@ -1,0 +1,76 @@
+<a class="skip-link" href="#main-content">{{ 'app.skipToContent' | transloco }}</a>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="topbar__brand" routerLink="/catalog" (click)="closeMobileMenu()">
+      <span class="topbar__mark" aria-hidden="true">AV</span>
+      <span class="topbar__name">{{ 'app.name' | transloco }}</span>
+    </a>
+
+    <button
+      type="button"
+      class="topbar__menu-btn"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      aria-controls="primary-navigation"
+      (click)="toggleMobileMenu()"
+    >
+      <app-icon name="menu" [size]="20" />
+      <span class="sr-only">Menu</span>
+    </button>
+
+    <nav
+      id="primary-navigation"
+      class="topbar__nav"
+      [class.topbar__nav--open]="mobileMenuOpen()"
+      aria-label="Primary navigation"
+    >
+      @for (item of navItems; track item.route) {
+        <a
+          class="topbar__link"
+          [routerLink]="item.route"
+          routerLinkActive="topbar__link--active"
+          (click)="closeMobileMenu()"
+        >
+          <app-icon [name]="item.icon" [size]="16" />
+          <span>{{ item.labelKey | transloco }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="topbar__actions">
+      <label class="sr-only" for="lang-select">{{ 'app.language' | transloco }}</label>
+      <select
+        id="lang-select"
+        class="topbar__select"
+        [value]="activeLang()"
+        (change)="switchLang($any($event.target).value)"
+      >
+        <option value="pt-BR">PT-BR</option>
+        <option value="en">EN</option>
+      </select>
+
+      <button
+        type="button"
+        class="topbar__icon-btn"
+        [attr.aria-label]="
+          themeService.theme() === 'dark'
+            ? ('app.themeLight' | transloco)
+            : ('app.themeDark' | transloco)
+        "
+        (click)="toggleTheme()"
+      >
+        <app-icon [name]="themeService.theme() === 'dark' ? 'sun' : 'moon'" [size]="18" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main-content" class="main-container" tabindex="-1">
+  <router-outlet />
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>{{ 'app.attribution' | transloco }}</p>
+  </div>
+</footer>

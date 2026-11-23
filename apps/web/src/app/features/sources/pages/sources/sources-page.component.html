@@ -1,0 +1,114 @@
+<section class="sources">
+  <header class="sources__header">
+    <h1>{{ 'sources.title' | transloco }}</h1>
+    <p class="sources__subtitle">{{ 'sources.subtitle' | transloco }}</p>
+    <p class="sources__cli-notice">{{ 'sources.cliNotice' | transloco }}</p>
+  </header>
+
+  @if (viewState() === 'loading') {
+    <app-state-panel kind="loading" />
+  } @else if (viewState() === 'error') {
+    <app-state-panel kind="error" [message]="errorMessage()" (retry)="load()" />
+  } @else {
+    <div class="sources__grid">
+      @for (src of sources(); track src.sourceId) {
+        <article class="source-card">
+          <div class="source-card__top">
+            <h2>{{ src.name }}</h2>
+            <span
+              class="source-card__badge"
+              [class.source-card__badge--active]="src.status === 'ACTIVE'"
+            >
+              {{ (src.status === 'ACTIVE' ? 'sources.active' : 'sources.inactive') | transloco }}
+            </span>
+          </div>
+
+          <p class="source-card__notes">{{ src.notes }}</p>
+
+          <dl class="source-card__meta">
+            <div>
+              <dt>{{ 'sources.license' | transloco }}</dt>
+              <dd>{{ src.license }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'sources.storage' | transloco }}</dt>
+              <dd>
+                {{ (src.permissions.store ? 'sources.allowed' : 'sources.denied') | transloco }}
+              </dd>
+            </div>
+            <div>
+              <dt>Snapshot</dt>
+              <dd>{{ src.lastSnapshotVersion ?? ('states.missing' | transloco) }}</dd>
+            </div>
+          </dl>
+
+          <a [href]="src.documentationUrl" target="_blank" rel="noopener noreferrer">
+            Docs <app-icon name="external" [size]="14" />
+          </a>
+        </article>
+      }
+    </div>
+
+    @if (anilistMetrics(); as am) {
+      <section class="source-card">
+        <div class="source-card__top">
+          <h2>AniList GraphQL (Session Metrics)</h2>
+          <span class="source-card__badge" [class.source-card__badge--active]="am.enabled">
+            {{ (am.enabled ? 'sources.active' : 'sources.inactive') | transloco }}
+          </span>
+        </div>
+        <p class="source-card__notes">{{ am.policySummary }}</p>
+        <dl class="source-card__meta">
+          <div>
+            <dt>Requests</dt>
+            <dd>{{ am.requestsTotal }} (429: {{ am.rateLimitedCount }})</dd>
+          </div>
+          <div>
+            <dt>Cache Hits</dt>
+            <dd>{{ am.cacheHits }}</dd>
+          </div>
+          <div>
+            <dt>Avg Latency</dt>
+            <dd>{{ am.avgLatencyMs }} ms</dd>
+          </div>
+        </dl>
+      </section>
+    }
+
+    <section class="sources__runs">
+      <h2>{{ 'sources.runsTitle' | transloco }}</h2>
+      @if (runs().length === 0) {
+        <p class="sources__empty">{{ 'sources.noRuns' | transloco }}</p>
+      } @else {
+        <div class="sources__table-wrap">
+          <table class="sources__table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Started</th>
+                <th>Valid</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Errors</th>
+                <th>Conflicts</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (run of runs(); track run.id) {
+                <tr>
+                  <td>{{ run.status }}</td>
+                  <td>{{ run.startedAt }}</td>
+                  <td>{{ run.validRecords }}</td>
+                  <td>{{ run.createdCount }}</td>
+                  <td>{{ run.updatedCount }}</td>
+                  <td>{{ run.errorCount }}</td>
+                  <td>{{ run.conflictCount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</section>

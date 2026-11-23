@@ -1,0 +1,198 @@
+<section class="studios">
+  <header class="studios__header">
+    <h1>{{ 'studios.title' | transloco }}</h1>
+    <p class="studios__subtitle">{{ 'studios.subtitle' | transloco }}</p>
+    <p class="studios__notice">
+      {{ metadata()?.policyNotice ?? ('studios.peopleNotice' | transloco) }}
+    </p>
+  </header>
+
+  <div class="studios__toolbar">
+    <input
+      type="search"
+      [value]="search()"
+      [placeholder]="'studios.searchPlaceholder' | transloco"
+      (input)="onSearch($any($event.target).value)"
+    />
+    <button type="button" [class.active]="role() === 'STUDIO'" (click)="setRole('STUDIO')">
+      {{ 'studios.roleStudio' | transloco }}
+    </button>
+    <button type="button" [class.active]="role() === 'PRODUCER'" (click)="setRole('PRODUCER')">
+      {{ 'studios.roleProducer' | transloco }}
+    </button>
+  </div>
+
+  @if (listState() === 'loading') {
+    <app-state-panel kind="loading" />
+  } @else if (listState() === 'error') {
+    <app-state-panel kind="error" [message]="errorMessage()" (retry)="loadCompanies()" />
+  } @else if (listState() === 'empty') {
+    <app-state-panel kind="empty" [message]="'states.emptyCatalog' | transloco" />
+  } @else {
+    <div class="studios__grid">
+      @for (c of companies(); track c.id) {
+        <button type="button" class="studios__card" (click)="selectCompany(c.id)">
+          <strong>{{ c.name }}</strong>
+          <span>{{ c.animeCount }} {{ 'studios.worksCount' | transloco }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  @if (graphPage(); as page) {
+    <section class="studios__graph">
+      <div class="studios__graph-bar">
+        <div class="studios__modes">
+          <button
+            type="button"
+            [class.active]="filters().mode === 'PRODUCTION'"
+            (click)="setMode('PRODUCTION')"
+          >
+            {{ 'studios.modeProduction' | transloco }}
+          </button>
+          <button
+            type="button"
+            [class.active]="filters().mode === 'COLLABORATION'"
+            (click)="setMode('COLLABORATION')"
+          >
+            {{ 'studios.modeCollaboration' | transloco }}
+          </button>
+        </div>
+
+        <div class="studios__actions">
+          <button type="button" (click)="focusRoot()">
+            {{ 'studios.backToRoot' | transloco }}
+          </button>
+          <button type="button" (click)="resetFilters()">
+            {{ 'studios.resetFilters' | transloco }}
+          </button>
+          <button type="button" (click)="copyShareableLink()">
+            {{ (copiedFeedback() ? 'studios.linkCopied' : 'studios.copyLink') | transloco }}
+          </button>
+          <button type="button" (click)="viewMode.set(viewMode() === 'graph' ? 'table' : 'graph')">
+            {{
+              (viewMode() === 'graph' ? 'relations.viewTable' : 'relations.viewGraph') | transloco
+            }}
+          </button>
+        </div>
+      </div>
+
+      <div class="studios__filters-row">
+        <input
+          type="search"
+          [value]="filters().nodeSearch"
+          [placeholder]="'studios.nodeSearchPlaceholder' | transloco"
+          (input)="updateNodeSearch($any($event.target).value)"
+        />
+        <input
+          type="number"
+          min="1900"
+          max="2100"
+          [value]="filters().yearFrom"
+          [placeholder]="'studios.yearFrom' | transloco"
+          (change)="updateYearFilter('yearFrom', $any($event.target).value)"
+        />
+        <input
+          type="number"
+          min="1900"
+          max="2100"
+          [value]="filters().yearTo"
+          [placeholder]="'studios.yearTo' | transloco"
+          (change)="updateYearFilter('yearTo', $any($event.target).value)"
+        />
+      </div>
+
+      <p class="studios__scope" aria-live="polite">
+        {{ page.partialScopeNotice }} — <strong>{{ loadedNodes().length }}</strong> nodes /
+        <strong>{{ loadedEdges().length }}</strong> edges ({{ page.metrics.sourceScope }})
+      </p>
+
+      <ul class="studios__legend" aria-label="Graph legend">
+        @for (item of legend; track item.kind) {
+          <li>
+            <span class="legend-dot" [attr.data-kind]="item.kind" aria-hidden="true"></span>
+            <span>{{ item.labelKey | transloco }} ({{ item.shapeLabel }})</span>
+          </li>
+        }
+      </ul>
+
+      @if (graphLoading()) {
+        <app-state-panel kind="loading" />
+      }
+
+      <div class="studios__workspace">
+        <div>
+          @if (viewMode() === 'graph') {
+            <app-cytoscape-graph
+              [nodes]="cytoscapeNodes()"
+              [edges]="cytoscapeEdges()"
+              [ariaLabel]="'studios.title' | transloco"
+              (nodeSelect)="onNodeSelect($event)"
+            />
+          } @else {
+            <div class="studios__table-wrap">
+              <table class="studios__table">
+                <thead>
+                  <tr>
+                    <th>Node</th>
+                    <th>Kind</th>
+                    <th>Year</th>
+                    <th>Provenance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (n of filteredNodes(); track n.id) {
+                    <tr>
+                      <td>
+                        @if (n.accessibleUrl) {
+                          <a [routerLink]="n.accessibleUrl">{{ n.label }}</a>
+                        } @else {
+                          {{ n.label }}
+                        }
+                      </td>
+                      <td>{{ n.kind }}</td>
+                      <td>{{ n.seasonYear ?? '—' }}</td>
+                      <td>{{ n.provenance }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          @if (page.pageInfo.hasMore) {
+            <button type="button" class="studios__load-more" (click)="loadMore()">
+              {{ 'studios.loadMore' | transloco }}
+            </button>
+          }
+        </div>
+
+        @if (selectedNode(); as sel) {
+          <aside class="studios__details" [attr.aria-label]="'studios.selectedNode' | transloco">
+            <h2>{{ 'studios.selectedNode' | transloco }}</h2>
+            <p>
+              <strong>{{ sel.label }}</strong> ({{ sel.kind }})
+            </p>
+            <p>Provenance: {{ sel.provenance }}</p>
+            @if (sel.roleLabel) {
+              <p>Role: {{ sel.roleLabel }}</p>
+            }
+            @if (sel.seasonYear) {
+              <p>Year: {{ sel.seasonYear }}</p>
+            }
+            <div class="studios__details-actions">
+              @if (sel.kind !== 'PERSON') {
+                <button type="button" (click)="expandSelectedNode()">
+                  {{ 'studios.expandSelected' | transloco }}
+                </button>
+              }
+              @if (sel.accessibleUrl) {
+                <a [routerLink]="sel.accessibleUrl">{{ 'catalog.title' | transloco }}</a>
+              }
+            </div>
+          </aside>
+        }
+      </div>
+    </section>
+  }
+</section>

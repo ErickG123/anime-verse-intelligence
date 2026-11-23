@@ -1,0 +1,208 @@
+.studios {
+  display: grid;
+  gap: var(--space-4);
+
+  &__header h1 {
+    margin: 0;
+  }
+
+  &__subtitle {
+    margin: var(--space-1) 0;
+    color: var(--text-secondary);
+  }
+
+  &__notice,
+  &__scope {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--status-info);
+  }
+
+  &__toolbar,
+  &__filters-row,
+  &__modes,
+  &__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+
+    input {
+      flex: 1 1 180px;
+      padding: var(--space-2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    button {
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      cursor: pointer;
+
+      &.active {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+        font-weight: 700;
+      }
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: var(--space-3);
+  }
+
+  &__card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      border-color: var(--accent-primary);
+    }
+  }
+
+  &__graph {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  &__graph-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  &__legend {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+  }
+
+  &__workspace {
+    display: grid;
+    grid-template-columns: 1fr 290px;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  &__details {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    display: grid;
+    gap: var(--space-2);
+
+    h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  &__details-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+
+    button {
+      padding: var(--space-2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--accent-primary);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+  }
+
+  &__load-more {
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--accent-primary);
+    background: var(--bg-surface);
+    color: var(--accent-primary);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      text-align: left;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+  }
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+
+  &[data-kind='ANIME'] {
+    background: #38bdf8;
+  }
+  &[data-kind='STUDIO'] {
+    background: #a78bfa;
+    border-radius: 2px;
+  }
+  &[data-kind='PRODUCER'] {
+    background: #fbbf24;
+  }
+  &[data-kind='PERSON'] {
+    background: #34d399;
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+}
+
+@media (max-width: 900px) {
+  .studios__workspace {
+    grid-template-columns: 1fr;
+  }
+}

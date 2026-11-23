@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+out/
+apps/web/.angular/
+apps/web/dist/
+apps/api/dist/
+packages/contracts/dist/
+*.tsbuildinfo
+
+# Logs and runtime data
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+data/*.jsonl
+data/*.json
+apps/api/data/
+!data/fixtures/**
+
+# Coverage and test reports
+coverage/
+playwright-report/
+test-results/
+
+# OS and IDE
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/

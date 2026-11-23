@@ -1,0 +1,17 @@
+export type IconName =
+  | 'catalog'
+  | 'discover'
+  | 'relations'
+  | 'studios'
+  | 'sources'
+  | 'about'
+  | 'lore'
+  | 'adaptation'
+  | 'sun'
+  | 'moon'
+  | 'search'
+  | 'filter'
+  | 'alert'
+  | 'empty'
+  | 'external'
+  | 'menu';

@@ -1,0 +1,73 @@
+<section class="relations">
+  <header class="relations__header">
+    <div>
+      <h1>{{ 'relations.title' | transloco }}</h1>
+      <p class="relations__subtitle">{{ 'relations.subtitle' | transloco }}</p>
+      <p class="relations__notice">{{ 'relations.unspecifiedNotice' | transloco }}</p>
+    </div>
+
+    @if (animeId()) {
+      <div class="relations__controls">
+        <label>
+          {{ 'relations.depth' | transloco }}
+          <select [value]="depth()" (change)="setDepth(+$any($event.target).value)">
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </label>
+
+        <button type="button" (click)="viewMode.set(viewMode() === 'graph' ? 'table' : 'graph')">
+          {{ (viewMode() === 'graph' ? 'relations.viewTable' : 'relations.viewGraph') | transloco }}
+        </button>
+
+        @if (viewMode() === 'graph') {
+          <button type="button" (click)="resetGraphView()">
+            {{ 'relations.resetView' | transloco }}
+          </button>
+        }
+      </div>
+    }
+  </header>
+
+  @if (viewState() === 'loading') {
+    <app-state-panel kind="loading" />
+  } @else if (viewState() === 'error') {
+    <app-state-panel kind="error" [message]="errorMessage()" (retry)="setDepth(depth())" />
+  } @else if (viewState() === 'empty' || !graph()) {
+    <app-state-panel kind="empty" [message]="'relations.empty' | transloco" />
+  } @else if (graph(); as g) {
+    @if (viewMode() === 'graph') {
+      <app-cytoscape-graph
+        [nodes]="g.nodes"
+        [edges]="g.edges"
+        [ariaLabel]="'relations.title' | transloco"
+        (nodeSelect)="onNodeSelect($event)"
+      />
+    } @else {
+      <div class="relations__table-wrap">
+        <table class="relations__table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Year</th>
+              <th>Relation</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (node of g.nodes; track node.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/catalog', node.id]">{{ node.label }}</a>
+                </td>
+                <td>{{ node.type ?? ('states.missing' | transloco) }}</td>
+                <td>{{ node.seasonYear ?? ('states.missing' | transloco) }}</td>
+                <td>{{ node.isCenter ? 'CENTER' : 'UNSPECIFIED' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>
